@@ -26,13 +26,6 @@ const Navbar = () => {
       </button>
     </div>
     </div>
-    
-    <div className='flex justify-evenly text-center items-center font-[Plus-Jakarta-Sans] lg:text-5xl md:text-4xl sm:text-3xl text-2xl '>
-    Get Products Right from <br/>Farm with Krishi
-    </div>
-    <div className="flex justify-center">
-    <div className="flex-initial "><button className="rounded-full border-2 py-2 px-5">Shop Now</button></div>
-    </div>
    
     </>
   )
