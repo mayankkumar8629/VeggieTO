@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <>
     <div className="flex justify-around items-center ">
-        <div className="flex-intial grow-3 w-12"> <img className='h-1/5' src={logo} /> </div>
+        <div className="flex-intial grow-3 w-12 md:w-10 sm:w-8"> <img className='h-auto w-full' src={logo} /> </div>
         <div className=" hidden sm:flex items-center grow-7 justify-start space-x-5 font-[Plus-Jakarta-Sans] text-lg">
             <a className='flex-initial ' href="#">Home</a>
             <a className='flex-initial ' href="">About us</a>

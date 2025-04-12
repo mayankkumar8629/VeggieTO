@@ -6,8 +6,8 @@ import Fresh from './Utilities/Fresh';
 
 const FirstSection = () => {
     return (
-        <div>
-            <div className='flex justify-evenly text-center items-center font-[Plus-Jakarta-Sans] lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-shadow-lg'>
+        <div className="bg-[#efebebda]">
+            <div className='flex justify-evenly pt-14 text-center items-center font-[Plus-Jakarta-Sans] lg:text-6xl md:text-4xl sm:text-3xl text-2xl text-shadow-lg'>
                 Get Products Right from <br />Farm with Krishi
             </div>
             <div className="flex justify-center">
@@ -18,7 +18,7 @@ const FirstSection = () => {
                     <div className="flex-initial  "><img src={img} className='flex-initial' /></div>
                     <div className="flex-initial "><DeliveryCard /></div>
                 </div>
-                <div className="flex-initial  "><img src={grocery} className='flex-initial h-96 object-bottom' /></div>
+                <div className="flex-initial  "><img src={grocery} className='flex-initial relative bottom-0' /></div>
                 <div className="flex-initial  "><Fresh /></div>
             </div>
 
