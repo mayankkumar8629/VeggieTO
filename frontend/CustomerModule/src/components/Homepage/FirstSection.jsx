@@ -18,7 +18,7 @@ const FirstSection = () => {
                     <div className="flex-initial  "><img src={img} className='flex-initial' /></div>
                     <div className="flex-initial "><DeliveryCard /></div>
                 </div>
-                <div className="flex-initial  "><img src={grocery} className='flex-initial relative bottom-0' /></div>
+                <div className="flex-initial  "><img src={grocery} className='flex-initial place-content-end' /></div>
                 <div className="flex-initial  "><Fresh /></div>
             </div>
 
