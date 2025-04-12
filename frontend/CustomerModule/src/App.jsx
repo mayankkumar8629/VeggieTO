@@ -3,6 +3,7 @@ import  Navbar from './components/Partials/Navbar';
 import FirstSection from './components/Homepage/FirstSection';
 import { SecondSection } from './components/Homepage/SecondSection';
 import  PreSecondSection  from './components/Homepage/PreSecondSection';
+import { ThirdSection } from './components/Homepage/ThirdSection';
 
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
       <FirstSection />
       <PreSecondSection />
       <SecondSection />
+      <ThirdSection />
     </div>
   )
 }
