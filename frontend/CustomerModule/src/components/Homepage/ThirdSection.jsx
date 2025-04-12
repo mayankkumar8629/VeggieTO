@@ -7,7 +7,7 @@ import img4 from '../../assets/Discover4.png';
 
 export const ThirdSection = () => {
     return (
-        <div className="bg-[#efebebda]">
+        <div className="bg-[#efebebda] px-6">
             <div className='flex justify-evenly pt-14 text-center items-center font-[Plus-Jakarta-Sans] lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-shadow-lg'>
                 Discover Krishi's Wide <br />Product Range
             </div>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const DiscoverCard = ({ title, description, imgUrl }) => {
     return (
-        <div className='flex     flex-row w-1/2 items-center gap-4 sm:gap-6 pl-6 m-3 pb-0 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300'>
+        <div className='flex     flex-row w-1/2 items-center gap-4 sm:gap-6 pl-6 m-3 pb-0 bg-white rounded-3xl shadow-md hover:shadow-lg transition-all duration-300'>
             <div className='flex-initial space-y-4'>
                 <h3 className='text-gray-800 text-lg sm:text-xl font-semibold font-[Plus-Jakarta-Sans]'>
                     {title}
