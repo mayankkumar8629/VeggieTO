@@ -6,6 +6,7 @@ dotenv.config({path:"../../.env"});
 import connectDB from "../../config/db.js";
 connectDB();
 
+import authRoute from "./farmerRoutes/authRoute.js";
 const app=express();
 const PORT = 5002;
 
@@ -22,6 +23,9 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/farmer",authRoute);
 
 app.listen(PORT,()=>{
     console.log(`FARMER SERVICE IS RUNNING ON PORT ${PORT}`);

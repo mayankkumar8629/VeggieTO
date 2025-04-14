@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "../config/db.js";
 
+//importing all the routes
+import authRoutes from "./routes/authRoutes.js";
+
 
 dotenv.config({path:"../.env"});
 connectDB();
@@ -27,10 +30,7 @@ app.use(express.urlencoded({extended:true}));
 
 
 
-//importing the routes
-
-
-//connection with the database
+app.use("/api",authRoutes);
 
 
 
