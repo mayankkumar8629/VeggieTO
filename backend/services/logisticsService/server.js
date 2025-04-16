@@ -2,9 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
+import authRoute from "./logisticsRoutes/authRoute.js";
+
 dotenv.config({path:"../../.env"});
 import connectDB from "../../config/db.js";
 connectDB();
+
+
 
 const app=express();
 const PORT = 5003;
@@ -22,6 +26,9 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/logistics",authRoute);
 
 app.listen(PORT,()=>{
     console.log(`LOGISTIC SERVICE IS RUNNING ON PORT ${PORT}`);

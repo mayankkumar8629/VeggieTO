@@ -1,4 +1,6 @@
 import Customer from "../../UserModel/customer.model.js";
+import Farmer from "../../farmerModel/farmer.model.js";
+import Admin from "../../adminModel/admin.model.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import bcrypt from "bcrypt";
@@ -8,14 +10,15 @@ export const login = async(req,res)=>{
     try{
         const {email,password,role}=req.body;
         let user=null;
-
+        
         if(role==="customer"){
             user=await Customer.findOne({email});
         }else if(role==="farmer"){
             user=await Farmer.findOne({email});
-        }else if(role=="logistics"){
+        }else if(role=="admin"){
             user=await Admin.findOne({email:email});
         }
+       
         if(!user){
             return res.status(400).json({message:"User does not exists"});
         }
