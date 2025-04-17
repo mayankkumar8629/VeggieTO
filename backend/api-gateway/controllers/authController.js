@@ -4,6 +4,9 @@ import Admin from "../../adminModel/admin.model.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+config.dotenv({path:"../../.env"});
+
 
 export const login = async(req,res)=>{
 
@@ -46,5 +49,32 @@ export const login = async(req,res)=>{
     }catch(error){
         console.error("login error",error);
         res.status(500).json({message:"Error in login",error});
+    }
+}
+
+export const signup = async(req,res)=>{
+    try{
+        const {role}=req.body;
+        let serviceUrl;
+        let endpoint="/customer/signup";
+        if(role==="customer"){
+            serviceUrl=process.env.CUSTOMER_SERVICE_URL;
+            endpoint="/customer/signup";
+        }else if(role==="farmer"){
+            serviceUrl=process.env.FARMER_SERVICE_URL;
+            endpoint="/farmer/signup";
+        }else if(role==="admin"){
+            serviceUrl=process.env.LOGISTIC_SERVICE_URL;
+            endpoint="/logistics/signup";
+        }else{
+            return res.status(400).json({message:"Invalid role provided"});
+        }
+
+        const response= await axios.post(`${serviceUrl}${endpoint}`,req.body);
+        res.status(response.status).json(response.data);
+    }catch(error){
+        console.error("Signup Error",error.message);
+        res.status(error.response?error.response.status:500)
+            .json({message:error.message});
     }
 }
