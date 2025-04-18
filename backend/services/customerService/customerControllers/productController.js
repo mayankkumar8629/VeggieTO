@@ -11,6 +11,16 @@ const fetchItemsAndCache = async(category)=>{
     );
     return items;
 }
+//helper function to fetch the item by id and cache in Redis
+const fetchItemAndCache = async(id)=>{
+    const item=await Item.findById(id);
+    await redisClient.set(
+        `item:${id}`,
+        item,
+        3600
+    );
+    return item;
+}
 export const getItemByCategory = async (req, res) => {
     try{
         console.log(req.query);
@@ -31,6 +41,24 @@ export const getItemByCategory = async (req, res) => {
         return res.json(items);
     }catch(error){
         console.error("Error fetching items by category:",error);
+        return res.status(500).json({message:"Internal server error"});
+    }
+}
+
+export const getItemById = async (req, res) => {
+    const {id}=req.params;
+    try{
+         const cachedItem=await redisClient.get(`item:${id}`);
+         if(cachedItem){
+            return res.status(200).json(cachedItem);
+        };
+        const item = await fetchItemAndCache(id);  
+        if(!item){
+            return res.status(404).json({message:"Item not found"});
+        }
+        return res.status(200).json(item);
+    }catch(error){
+        console.error("Error fetching item by id:",error);
         return res.status(500).json({message:"Internal server error"});
     }
 }
