@@ -6,6 +6,7 @@ import connectDB from "../config/db.js";
 
 //importing all the routes
 import authRoutes from "./routes/authRoutes.js";
+import proxyRoutes from "./routes/proxyRoute.js";
 
 
 dotenv.config({path:"../.env"});
@@ -31,6 +32,7 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use("/api",authRoutes);
+app.use("/api",proxyRoutes);
 
 
 

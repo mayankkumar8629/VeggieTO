@@ -6,3 +6,5 @@ const router=express.Router();
 router.use("/customer",customer);
 router.use("/farmer",farmer);
 router.use("/logistics",logistics);
+
+export default router;

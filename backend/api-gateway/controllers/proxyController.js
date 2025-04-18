@@ -1,18 +1,17 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { response } from "express";
-config.dotenv({path:"../../.env"});
+dotenv.config({path:"../../.env"});
 
-export const user = async(req,res)=>{
+export const customer = async(req,res)=>{
 
     try{
-        const url=`${process.env.CUSTOMER_SERVICE_URL}${req.originalUrl.replac("/customer","")}`;
+        const url=`${process.env.CUSTOMER_SERVICE_URL}${req.originalUrl.replace("/customer","")}`;
         console.log(url);
-        const reponse = await axios({
+        const response = await axios({
             method:req.method,
             url,
             data:req.body,
-            params:req.query,
             header:{
                 Authorization:req.headers.authorization,
                 'Content-Type':req.headers['content-type']

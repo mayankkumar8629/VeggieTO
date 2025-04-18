@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-config.dotenv({path:"../../.env"});
+dotenv.config({path:"../../.env"});
 
 
 export const login = async(req,res)=>{
