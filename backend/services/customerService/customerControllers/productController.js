@@ -46,6 +46,7 @@ export const getItemByCategory = async (req, res) => {
 }
 
 export const getItemById = async (req, res) => {
+    console.log("hi");
     const {id}=req.params;
     try{
          const cachedItem=await redisClient.get(`item:${id}`);
@@ -57,6 +58,45 @@ export const getItemById = async (req, res) => {
             return res.status(404).json({message:"Item not found"});
         }
         return res.status(200).json(item);
+    }catch(error){
+        console.error("Error fetching item by id:",error);
+        return res.status(500).json({message:"Internal server error"});
+    }
+}
+
+export const searchItems = async (req,res ) =>{
+    console.log("hi");
+    const {name}=req.query;
+    try{
+        if(!name || typeof name!=="string"){
+            return res.status(400).json({message:"Name is required"});
+        }
+        console.log(name);
+        const searchTerm = name.trim().toLowerCase();
+
+        const cacheKey =  `search:partial:${searchTerm}`;
+        const cachedSeachResults = await redisClient.get(cacheKey);
+
+        if(cachedSeachResults){
+            return res.status(200).json({
+                cached:true,
+                results:cachedSeachResults
+            });
+        }
+        //searching in mongodb 
+        const items = await Item.find({
+            name: {$regex:searchTerm, $options:'i'},
+        });
+
+        await redisClient.set(
+            cacheKey,
+            items,
+            300
+        );
+        return res.status(200).json({
+            cached:false,
+            results:items
+        });
     }catch(error){
         console.error("Error fetching item by id:",error);
         return res.status(500).json({message:"Internal server error"});

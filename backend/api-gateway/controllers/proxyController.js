@@ -12,7 +12,7 @@ export const customer = async(req,res)=>{
             method:req.method,
             url,
             data:req.body,
-            header:{
+            headers:{
                 Authorization:req.headers.authorization,
                 'Content-Type':req.headers['content-type']
             }
