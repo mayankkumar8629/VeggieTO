@@ -21,24 +21,62 @@ const fetchItemAndCache = async(id)=>{
     );
     return item;
 }
+//filter items based on price -> asc/desc , min and max price
+const filterAndSortItems = (items,{sort,minPrice,maxPrice})=>{
+    let filteredItems=items;
+
+    if(minPrice!==undefined || maxPrice!==undefined){
+        filteredItems=filteredItems.filter(item => {
+            const price = item.price;
+            const min = minPrice!==undefined ?  minPrice : 0;
+            const max = maxPrice!==undefined? maxPrice :Number.MAX_SAFE_INTEGER;
+            return price>=min && price<=max;
+        });
+    }
+    if(sort==="asc"){
+        filteredItems=filteredItems.sort((a,b)=>a.price-b.price);
+    }else if(sort==="desc"){
+        filteredItems=filteredItems.sort((a,b)=>b.price-a.price);
+    }
+    return filteredItems;
+}
+
+
+
+
+
 export const getItemByCategory = async (req, res) => {
     try{
         console.log(req.query);
-        const {category}=req.query;
+        const {category,sort,minPrice,maxPrice}=req.query;
         if(!category){
             return res.status(400).json({message:"Category is required"});
         }
         const cachedItems=await redisClient.get(`items:category:${category}`);
         console.log(typeof cachedItems);
+        let items;
 
         if(cachedItems){
-            return res.status(200).json(cachedItems);
+            items=cachedItems
+        }else{
+            items=await fetchItemsAndCache(category);
+            console.log("Items fetched from DB and cached");
         }
-        const items = await fetchItemsAndCache(category);
+        
         if(!items || items.length===0){
             return res.status(404).json({message:"No items found"});
         }
-        return res.json(items);
+        const hasFilter = sort !== undefined || minPrice !== undefined || maxPrice !== undefined;
+        const finalItems = hasFilter
+            ? filterAndSortItems(items,{
+                sort,
+                minPrice:minPrice?Number(minPrice):undefined,
+                maxPrice:maxPrice?Number(maxPrice):undefined
+            })
+            :items;
+
+    
+        return res.json(finalItems);
     }catch(error){
         console.error("Error fetching items by category:",error);
         return res.status(500).json({message:"Internal server error"});
@@ -66,7 +104,7 @@ export const getItemById = async (req, res) => {
 
 export const searchItems = async (req,res ) =>{
     console.log("hi");
-    const {name}=req.query;
+    const {name,sort,minPrice,maxPrice}=req.query;
     try{
         if(!name || typeof name!=="string"){
             return res.status(400).json({message:"Name is required"});
@@ -76,27 +114,36 @@ export const searchItems = async (req,res ) =>{
 
         const cacheKey =  `search:partial:${searchTerm}`;
         const cachedSeachResults = await redisClient.get(cacheKey);
+        let items;
 
         if(cachedSeachResults){
-            return res.status(200).json({
-                cached:true,
-                results:cachedSeachResults
+            items=cachedSeachResults;
+            console.log("Items fetched from cache");
+        }else{
+            items=await Item.find({
+                name: {$regex:searchTerm, $options:'i'},
             });
+            console.log("Items fetched from DB and cached");
+            await redisClient.set(
+                cacheKey,
+                items,
+                300
+            );
         }
-        //searching in mongodb 
-        const items = await Item.find({
-            name: {$regex:searchTerm, $options:'i'},
-        });
+        if(!items || items.length===0){
+            return res.status(404).json({message:"No items found"});
+        }
+        const hasFilter = sort !== undefined || minPrice !== undefined || maxPrice !== undefined;
+        const finalItems = hasFilter
+            ? filterAndSortItems(items,{
+                sort,
+                minPrice:minPrice?Number(minPrice):undefined,
+                maxPrice:maxPrice?Number(maxPrice):undefined
+            })
+            :items;
 
-        await redisClient.set(
-            cacheKey,
-            items,
-            300
-        );
-        return res.status(200).json({
-            cached:false,
-            results:items
-        });
+    
+        return res.json(finalItems);
     }catch(error){
         console.error("Error fetching item by id:",error);
         return res.status(500).json({message:"Internal server error"});
