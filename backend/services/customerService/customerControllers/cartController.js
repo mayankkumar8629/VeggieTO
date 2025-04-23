@@ -3,6 +3,42 @@ import Cart from "../../../UserModel/cart.model.js";
 import Item from "../../../UserModel/items.model.js";
 import mongoose from "mongoose";
 
+//get cart
+export const getCart = async(req,res)=>{
+    try{
+        const userId=req.user.id;
+        const cart = await Cart.findOne({user:userId})
+        .populate({
+            path:'items.itemId',
+            select:'name price stock category',
+        })
+        .lean();
+        if(!cart){
+            return res.status(404).json({message:"Cart not found"});
+        }
+        let message;
+        if(cart.items.length===0){
+            message="cart is empty"
+        }else{
+            message=`items in the cart = ${cart.items.length}`;
+        }
+        const totalPrice = cart.items.reduce((sum,item)=>(
+            sum + (item.itemId.price * item.quantity)
+        ),0);
+        return res.json({
+            message,
+            cart:{
+                ...cart,
+                totalPrice,
+                itemCount:cart.items.length
+            }
+        });
+    }catch(error){
+        console.error("error fetching cart",error);
+        return res.status(500).json({message:"Failed to fetch the cart"});
+    }
+
+}
 //adding new item to the cart-strictly just add item in the cart
 export const addCartItem = async(req,res)=>{
     const session=await mongoose.startSession();
@@ -130,5 +166,39 @@ export const updateCartItem = async(req,res)=>{
 
 //removing the item from the cart
 export const removeCartItem = async(req,res)=>{
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try{
+        const {itemId}=req.body;
+        const userId=req.user.id;
 
-}
+        if(!mongoose.Types.ObjectId.isValid(itemId)){
+            return res.status(400).json({message:"Invalid item Id"});
+        }
+
+        const cart=await Cart.findOne({user:userId}).session(session);
+        if(!cart){
+            return res.status(404).json({message:"cart not found"});
+        }
+        const initialLength = cart.items.length;
+        cart.items = cart.items.filter(item=>!item.itemId.equals(itemId));
+        if (cart.items.length === initialLength) {
+            return res.status(404).json({ error: "Item not in cart" });
+        }
+
+        await cart.save({session});
+        await session.commitTransaction();
+
+        res.json({
+            success: true,
+            cart: await Cart.findById(cart._id).populate('items.itemId', 'name price')
+          });
+    }catch(error){
+        await session.abortTransaction();
+        res.status(500).json({
+            message:"Error deleting cart items"
+        });
+    }finally{
+        session.endSession();
+    }
+};
