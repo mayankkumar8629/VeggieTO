@@ -73,17 +73,21 @@ export const updateCartItem = async(req,res)=>{
     session.startTransaction();
 
     try{
+        console.log("req");
         const {itemId}=req.body;
         const {action }=req.query;
         const userId=req.user.id;
+        console.log(userId);
         if(!mongoose.Types.ObjectId.isValid(itemId)){
             return res.status(400).json({message:"Invalid item id"});
         }
-        if(!action || (!["increment","decrement"].included(action))){
+        if(!action || (!["increment","decrement"].includes(action))){
             return res.status(400).json({message:"Invalid action"});
         }
-        
+        console.log("hi");
         const cart=await Cart.findOne({user:userId}).session(session);
+        console.log("H");
+        console.log(cart);
         if(!cart){
             return res.status(404).json({message:"Cart not found"});
         }
@@ -126,5 +130,5 @@ export const updateCartItem = async(req,res)=>{
 
 //removing the item from the cart
 export const removeCartItem = async(req,res)=>{
-    
+
 }
