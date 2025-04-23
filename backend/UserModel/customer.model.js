@@ -37,12 +37,12 @@ const customerSchema = new Schema({
             type:String
         }
     },
-    cart:[
+    cart:
         {
             type:Schema.Types.ObjectId,
             ref:"Cart"
         }
-    ],
+    ,
     transactions:[
         {
             type:Schema.Types.ObjectId,

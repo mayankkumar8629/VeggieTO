@@ -4,6 +4,7 @@ import cors from "cors";
 import redis from "./utils/redis.js";
 import authRoutes from "./customerRoutes/authRoute.js";
 import itemsRoutes from "./customerRoutes/itemsRoute.js";
+import cartRoutes from "./customerRoutes/cartRoutes.js";
 
 
 dotenv.config({path:"../../.env"});
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/customer",authRoutes);
 app.use("/api/items",itemsRoutes);
+app.use("/api/cart",cartRoutes)
 
 app.listen(PORT,()=>{
     console.log(`CUSTOMER SERIVCE IS RUNNING ON PORT ${PORT}`);
