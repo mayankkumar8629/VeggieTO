@@ -5,5 +5,6 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/addNewItem",authenticateToken,addCartItem);
+router.patch("/updateItem",authenticateToken,addCartItem);
 
 export default router;
