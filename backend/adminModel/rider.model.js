@@ -13,7 +13,7 @@ const riderSchema = new Schema({
     },
     password:{
         type:String,
-        requird:true
+        required:true
     },
     contactNumber:{
         type:Number,
