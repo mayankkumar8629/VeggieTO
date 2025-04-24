@@ -29,8 +29,8 @@ const orderSchema=new Schema({
     },
     status:{
         type:String,
-        enum:["pending","confirmed","cancelled","refunded"],
-        default:pending
+        enum:["pending","confirmed","cancelled","refunded","delivered"],
+        default:"pending"
     },
     createdAt:{
         type:Date,

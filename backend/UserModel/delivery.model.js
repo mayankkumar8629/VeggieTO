@@ -20,8 +20,8 @@ const deliverySchema = new Schema({
         type:String,
         enum:[
             'pending',
+            'assigned',
             'picked-up',
-            'arrived',
             'delivered',
             'failed'
         ],

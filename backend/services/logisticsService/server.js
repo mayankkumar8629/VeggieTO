@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import authRoute from "./logisticsRoutes/authRoute.js";
+import riderRoute from "./logisticsRoutes/riderRoute.js";
 
 dotenv.config({path:"../../.env"});
 import connectDB from "../../config/db.js";
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/logistics",authRoute);
+app.use("/api/rider",riderRoute);
 
 app.listen(PORT,()=>{
     console.log(`LOGISTIC SERVICE IS RUNNING ON PORT ${PORT}`);
