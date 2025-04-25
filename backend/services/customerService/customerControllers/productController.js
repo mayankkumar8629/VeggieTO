@@ -1,5 +1,6 @@
 import Item from "../../../UserModel/items.model.js";
 import redisClient from "../utils/redis.js";
+import mongoose from "mongoose";
 
 //helper function to fetch from DB and cache in Redis
 const fetchItemsAndCache = async(category)=>{
@@ -104,6 +105,7 @@ export const getItemById = async (req, res) => {
 
 export const searchItems = async (req,res ) =>{
     console.log("hi");
+    
     const {name,sort,minPrice,maxPrice}=req.query;
     try{
         if(!name || typeof name!=="string"){

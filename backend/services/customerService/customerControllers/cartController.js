@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 //get cart
 export const getCart = async(req,res)=>{
+    
     try{
         const userId=req.user.id;
         const cart = await Cart.findOne({user:userId})
@@ -87,11 +88,7 @@ export const addCartItem = async(req,res)=>{
         console.log(cart);
 
         await session.commitTransaction();
-        res.status(201).json({
-            success: true,
-            cart: await Cart.findById(cart._id).populate('items.itemId', 'name price')
-        });
-
+        
         
         
     }catch(error){

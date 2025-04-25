@@ -15,7 +15,7 @@ const orderSchema=new Schema({
                 required:true
             },
             quantity:{
-                type:Nunber,
+                type:Number,
                 required:true,
                 min:1,
                 default:1
@@ -25,6 +25,10 @@ const orderSchema=new Schema({
     totalPrice:{
         type:Number,
         min:0,
+        required:true
+    },
+    razorpayOrderId:{
+        type:String,
         required:true
     },
     status:{
