@@ -1,9 +1,37 @@
 import Customer from "../../../UserModel/customer.model.js";
 import Cart from "../../../UserModel/cart.model.js";
 import Item from "../../../UserModel/items.model.js";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
+import { runTransaction } from "../../../config/db.js";
+
 
 //get cart
+export const testSession = async (req, res) => {
+    // 1. First verify connection state
+    try {
+        // Manually connect if disconnected
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.disconnect(); // Clean up any stale connection
+            await mongoose.connect(process.env.MONGO_URI, {
+              connectTimeoutMS: 30000,
+              socketTimeoutMS: 45000
+            });
+          }
+    
+        const session = await mongoose.startSession();
+        console.log('✅ Success! Session ID:', session.id);
+        session.endSession();
+        res.json({ status: 'Connected', sessionId: session.id });
+    
+      } catch (err) {
+        console.error('Fatal connection error:', err);
+        res.status(500).json({ 
+          error: err.message,
+          advice: 'Check: 1) Connection string 2) Internet 3) Atlas IP whitelist'
+        });
+      }
+  };
+  
 export const getCart = async(req,res)=>{
     
     try{
@@ -41,161 +69,169 @@ export const getCart = async(req,res)=>{
 
 }
 //adding new item to the cart-strictly just add item in the cart
-export const addCartItem = async(req,res)=>{
-    const session=await mongoose.startSession();
-    session.startTransaction();
-
-    try{
-        const {itemId}=req.body;
-        const userId=req.user.id;
-        
-
-        if(!mongoose.Types.ObjectId.isValid(itemId)){
-            return res.status(400).json({message:"Invalid item id"});
+export const addCartItem = async (req, res) => {
+    try {
+      const result = await runTransaction(async (session) => {
+        const { itemId } = req.body;
+        const userId = req.user.id;
+  
+        // Validate item ID
+        if (!mongoose.Types.ObjectId.isValid(itemId)) {
+          throw { status: 400, message: "Invalid item id" };
         }
-
-        const item=await Item.findById(itemId).session(session);
-        console.log(item);
-        if(!item || item.quantity<1){
-            return res.status(404).json({message:"Item out of stock"});
+  
+        // Check item availability
+        const item = await Item.findById(itemId).session(session);
+        if (!item || item.quantity < 1) {
+          throw { status: 404, message: "Item out of stock" };
         }
-        console.log("itemhere");
-        let cart = await Cart.findOne({user:userId}).session(session);
-        if(cart?.items.some(i => i.itemId.equals(itemId))){
-            return res.status(400).json({message:"Item already in cart"});
+  
+        // Check cart existence
+        const cart = await Cart.findOne({ user: userId }).session(session);
+        
+        // Check if item already in cart
+        if (cart?.items.some(i => i.itemId.equals(itemId))) {
+          throw { status: 409, message: "Item already in cart" };
         }
-        console.log(cart);
-        if(!cart){
-            //create new cart if cart does not exist
-            cart = new Cart({
-                user:userId,
-                items:[{itemId:itemId,quantity:1}]
-            });
-            await cart.save({session});
-            
-
-            //adding the cartId to the customer
-            await Customer.findByIdAndUpdate(
-                userId,
-                {cart:cart._id},
-                {new:true,session}
-            );
-        }else{
-            //adding the item to the existing cart
-            cart.items.push({itemId,quantity:1});
-            await cart.save({session});
+  
+        if (!cart) {
+          // Create new cart
+          const newCart = await Cart.create([{
+            user: userId,
+            items: [{ itemId, quantity: 1 }]
+          }], { session });
+  
+          // Update customer's cart reference
+          await Customer.findByIdAndUpdate(
+            userId,
+            { cart: newCart[0]._id },
+            { new: true, session }
+          );
+  
+          return newCart[0];
+        } else {
+          // Add to existing cart
+          cart.items.push({ itemId, quantity: 1 });
+          await cart.save({ session });
+          return cart;
         }
-        console.log(cart);
-
-        await session.commitTransaction();
-        
-        
-        
-    }catch(error){
-        await session.abortTransaction();
-        res.status(500).json({message:"Error in adding item to cart"});
-    }finally{
-        session.endSession();
+      });
+  
+      res.status(200).json({ 
+        success: true,
+        cart: result
+      });
+  
+    } catch (error) {
+      console.error('Transaction error:', error);
+      
+      return res.status(500).json({
+        message: error.message || "Error adding item to cart",
+        error: error.error || null
+      });
     }
-}
-
+  };
 //updating the item in the cart-strictly just update the item in the cart
-export const updateCartItem = async(req,res)=>{
-
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try{
-        console.log("req");
-        const {itemId}=req.body;
-        const {action }=req.query;
-        const userId=req.user.id;
-        console.log(userId);
-        if(!mongoose.Types.ObjectId.isValid(itemId)){
-            return res.status(400).json({message:"Invalid item id"});
+export const updateCartItem = async (req, res) => {
+    try {
+      await runTransaction(async (session) => {
+        const { itemId } = req.body;
+        const { action } = req.query;
+        const userId = req.user.id;
+  
+        // Validate inputs
+        if (!mongoose.Types.ObjectId.isValid(itemId)) {
+          throw { status: 400, message: "Invalid item id" };
         }
-        if(!action || (!["increment","decrement"].includes(action))){
-            return res.status(400).json({message:"Invalid action"});
+        if (!action || !["increment", "decrement"].includes(action)) {
+          throw { status: 400, message: "Invalid action" };
         }
-        console.log("hi");
-        const cart=await Cart.findOne({user:userId}).session(session);
-        console.log("H");
-        console.log(cart);
-        if(!cart){
-            return res.status(404).json({message:"Cart not found"});
+  
+        // Find cart and validate
+        const cart = await Cart.findOne({ user: userId }).session(session);
+        if (!cart) {
+          throw { status: 404, message: "Cart not found" };
         }
-        const itemIndex=cart.items.findIndex(i => i.itemId.equals(itemId));
-        if(itemIndex===-1){
-            return res.status(404).json({message:"Item not found in cart"});
+  
+        // Find item in cart
+        const itemIndex = cart.items.findIndex(i => i.itemId.equals(itemId));
+        if (itemIndex === -1) {
+          throw { status: 404, message: "Item not found in cart" };
         }
-        const currentQuantity=cart.items[itemIndex].quantity;
-        let newQuantity=0;
-        if(action === "increment"){
-            newQuantity=currentQuantity+1;
-        }else if(action==="decrement"){
-            newQuantity=currentQuantity-1;
-        }   
-
-        const item =await Item.findById(itemId).session(session);
-        if(action==="increment" && item.quantity<newQuantity){
-            return res.status(400).json({message:"Item out of stock"});
+  
+        // Calculate new quantity
+        const currentQuantity = cart.items[itemIndex].quantity;
+        let newQuantity = action === "increment" 
+          ? currentQuantity + 1 
+          : currentQuantity - 1;
+  
+        // Check stock if incrementing
+        if (action === "increment") {
+          const item = await Item.findById(itemId).session(session);
+          if (item.quantity < newQuantity) {
+            throw { status: 400, message: "Item out of stock" };
+          }
         }
-        if(newQuantity<=0){
-            cart.items.splice(itemIndex,1);
-        }else{
-            cart.items[itemIndex].quantity=newQuantity;
+  
+        // Update or remove item
+        if (newQuantity <= 0) {
+          cart.items.splice(itemIndex, 1);
+        } else {
+          cart.items[itemIndex].quantity = newQuantity;
         }
-
-        await cart.save({session});
-        await session.commitTransaction();
-        const updatedCart=await Cart.findById(cart._id).populate('items.itemId', 'name price');
-        res.status(200).json({
+  
+        await cart.save({ session });
+        
+      });
+  
+      const updatedCart=await Cart.findOne({user:req.user.id}).populate('items.itemId', 'name price');
+      res.status(200).json({
             success:true,
             cart:updatedCart
         });
-    }catch(error){
-        await session.abortTransaction();
-        res.status(500).json({message:"Error in updating item in cart"});
-    }finally{
-        session.endSession();
+    } catch (error) {
+      console.error('Transaction error:', error);
+      
+      const statusCode = error.status || 500;
+      const errorMessage = error.message || "Error in updating item in cart";
+      
+      return res.status(statusCode).json({
+        message: errorMessage,
+        error: error.error || null
+      });
     }
-};
+  };
 
-//removing the item from the cart
+
+
 export const removeCartItem = async(req,res)=>{
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try{
-        const {itemId}=req.body;
-        const userId=req.user.id;
+  try{
+    await runTransaction(async (session) => {
+      const {itemId}=req.body;
+      const userId=req.user.id;
+      
+      if(!mongoose.Types.ObjectId.isValid(itemId)){
+        return res.status(500).json({message:"Invaid item id"});
+      }
+      const cart = await Cart.findOne({user:userId}).session(session);
+      if(!cart){
+        return res.status(404).json({message:"Cart not found"});
+      }
+      const initialLength=cart.items.length;
+      cart.items=cart.items.filter(item=>!item.itemId.equals(itemId));
+      if(cart.items.length===initialLength){
+        return res.status(404).json({message:"Item not in the cart"});
+      }
+      await cart.save(session);
+    });
+    const updatedCart=await Cart.findOne({user:req.user.id}).populate('items.itemId','name price');
+    return res.status(200).json({
+      success:true,
+      cart:updatedCart
+    });
+  }catch(error){
+    console.error("Error deleting items from the cart");
+    return res.status(500).json({message:"Error deleting item from the cart",error});
+  }
 
-        if(!mongoose.Types.ObjectId.isValid(itemId)){
-            return res.status(400).json({message:"Invalid item Id"});
-        }
-
-        const cart=await Cart.findOne({user:userId}).session(session);
-        if(!cart){
-            return res.status(404).json({message:"cart not found"});
-        }
-        const initialLength = cart.items.length;
-        cart.items = cart.items.filter(item=>!item.itemId.equals(itemId));
-        if (cart.items.length === initialLength) {
-            return res.status(404).json({ error: "Item not in cart" });
-        }
-
-        await cart.save({session});
-        await session.commitTransaction();
-
-        res.json({
-            success: true,
-            cart: await Cart.findById(cart._id).populate('items.itemId', 'name price')
-          });
-    }catch(error){
-        await session.abortTransaction();
-        res.status(500).json({
-            message:"Error deleting cart items"
-        });
-    }finally{
-        session.endSession();
-    }
-};
+}
