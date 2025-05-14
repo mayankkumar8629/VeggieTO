@@ -22,7 +22,7 @@ class RedisClient {
 
 
   async set(key, value, ttlSeconds = null) {
-    try {
+    try {k
       if (ttlSeconds) {
         return await this.client.setex(key, ttlSeconds, JSON.stringify(value));
       }
