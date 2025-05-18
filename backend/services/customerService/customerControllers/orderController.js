@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import Razorpay from 'razorpay';
 dotenv.config({ path: '../../../.env' });
 import crypto from "crypto";
+import {publisher} from "../../../config/redisPubSub.js";
 
 
 import mongoose from "mongoose";
@@ -101,21 +102,64 @@ export const placeOrder = async(req,res)=>{
     }
 }
 
-export const verifyPayment = (req,res)=>{
+export const verifyPayment = async (req,res)=>{
     try{
         const {razorpay_order_id,razorpay_payment_id,razorpay_signature}=req.body;
 
         const key_secret=process.env.RAZORPAY_KEY_SECRET;
 
+        if(!razorpay_order_id || !razorpay_payment_id || !razorpay_signature){
+            return res.status(400).json({success:false,message:"Invalid request"});
+        }
+
         const generated_signature = crypto
         .createHmac('sha256',key_secret)
         .update(razorpay_order_id + "|" + razorpay_payment_id)
         .digest('hex');
-        if(generated_signature===razorpay_signature){
-            return res.status(200).json({success:true,message:"Payment verified"});
-        }else{
-            return res.status(400).json({success:false,message:"Payment failed"});
+        
+        //signature mismatch
+        if(generated_signature !== razorpay_signature){
+            await Order.findOneAndUpdate(
+                {razorpayOrderId:razorpay_order_id},
+                {status:"failed"}
+            );
+            return res.status(400).json({
+                success:false,
+                message:"Payment verification failed"
+            });
         }
+        //signature macthes
+        const updatedOrder = await Order.findOneAndUpdate(
+            {razorpayOrderId:razorpay_order_id},
+            {
+                status:"confirmed"
+            },
+            {new:true}
+        );
+        if(!updatedOrder){
+            return res.status(404).json({
+                success:false,
+                message:"Order not found"
+            })
+        }
+        //publishing the event 
+        const eventPayLoad = {
+            eventId : 'evt_${Date.now()}_${razorpay_order_id}',
+            orderId: updatedOrder._id,
+            userId: updatedOrder.user,
+            items: updatedOrder.items,
+
+        }; 
+        publisher.publish('order_confirmed',JSON.stringify(eventPayLoad));
+
+        //returning success resposnse
+        return res.status(200).json({
+            success:true,
+            message:"Payment verified successfully",
+            order:updatedOrder
+        });
+
+
     }catch(error){
         console.error("error in verifing payment",error);
         return res.status(500).json({message:"Error in payment verification",error});
