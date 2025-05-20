@@ -11,7 +11,7 @@ const PreSecondSection = () => {
                     Transforming Everyday <br /> Shopping with Quality
                 </h2>
                 <p className="text-lg font-[Plus-Jakarta-Sans] text-gray-700">
-                    At GreenCart, we are committed to delivering the finest, freshest ingredients straight to your table. Our mission is simple: to make premium grocery shopping accessible and enjoyable for everyone.
+                    At Krishi, we are committed to delivering the finest, freshest ingredients straight to your table. Our mission is simple: to make premium grocery shopping accessible and enjoyable for everyone.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center text-left w-full py-6">
                     <div className='flex-initial flex flex-col items-start sm:items-center justify-center border-b sm:border-b-0 sm:border-r-2 border-gray-400 pr-4 pb-4 sm:pb-0'>

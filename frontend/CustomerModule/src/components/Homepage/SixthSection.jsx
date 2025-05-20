@@ -18,7 +18,7 @@ export const SixthSection = () => {
           From Cart to Home, Your Grocery Simplified.
         </h2>
         <p className="text-lg font-[Plus-Jakarta-Sans] text-gray-200">
-          Curious why GreenCart stands out as the go-to choice for premium groceries? Our dedication to quality, convenience, and freshness transforms every shopping trip into a delightful and satisfying experience. Discover how GreenCart makes your culinary journey exceptional, every step of the way.
+          Curious why Krishi stands out as the go-to choice for premium groceries? Our dedication to quality, convenience, and freshness transforms every shopping trip into a delightful and satisfying experience. Discover how Krishi makes your culinary journey exceptional, every step of the way.
         </p>
         <button className="rounded-full  py-2 px-6 shadow-md bg-white hover:shadow-lg transition-all duration-300">
           Learn More

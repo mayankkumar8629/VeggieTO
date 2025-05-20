@@ -66,7 +66,7 @@ const Footer = () => (
         <a href="#" className="hover:text-gray-700">Privacy Policy</a>
       </div>
       <div className="text-center md:text-right">
-        © Copyright GreenCart 2024
+        © Copyright Krishi 2024
       </div>
     </div>
   </footer>
