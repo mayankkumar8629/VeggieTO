@@ -43,7 +43,7 @@ const Navbar = () => {
     e.preventDefault();
     try {
       // Send login request
-      const res = await axios.post('/login', {
+      const res = await axios.post(`http://localhost:3000/api/${userRole}/login`, {
         email: formData.email,
         password: formData.password,
         role: userRole,
@@ -58,7 +58,7 @@ const Navbar = () => {
     e.preventDefault();
     try {
       // Send signup request
-      const res = await axios.post('/signup', {
+      const res = await axios.post(`http://localhost:3000/api/${userRole}/signup`, {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
