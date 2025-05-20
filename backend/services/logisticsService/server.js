@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import http from "http";
+import { initSocket } from "./config/websocket.js";
 
 import authRoute from "./logisticsRoutes/authRoute.js";
 import riderRoute from "./logisticsRoutes/riderRoute.js";
@@ -13,6 +15,9 @@ connectDB();
 
 const app=express();
 const PORT = 5003;
+const server = http.createServer(app);
+initSocket(server);
+
 
 app.use(
     cors({
@@ -32,6 +37,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/logistics",authRoute);
 app.use("/api/rider",riderRoute);
 
-app.listen(PORT,()=>{
-    console.log(`LOGISTIC SERVICE IS RUNNING ON PORT ${PORT}`);
+server.listen(PORT,()=>{
+    console.log(`LOGISTIC SERVICE IS RUNNING ON PORT ${PORT} HTTP + WEBSOCKET`);
 })

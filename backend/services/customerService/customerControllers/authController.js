@@ -9,7 +9,6 @@ export const signup = async(req,res)=>{
             email,
             password,
             contactNumber,
-            address
         }=req.body;
         if(!name || !email || !password){
             return res.status(400).json({message:"Empty field detected"});
@@ -24,7 +23,6 @@ export const signup = async(req,res)=>{
             email,
             password:hashedPassword,
             contactNumber,
-            address,
             role:"customer"
         });
         await newCustomer.save();
@@ -35,7 +33,6 @@ export const signup = async(req,res)=>{
                 name:newCustomer.name,
                 email:newCustomer.email,
                 contactNumber:newCustomer.contactNumber,
-                address:newCustomer.address,
                 role:newCustomer.role,
                 createdAt:newCustomer.createdAt
             }

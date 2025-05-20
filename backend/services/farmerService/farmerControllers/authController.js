@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 export const signup = async(req,res)=>{
     try{
-        const {name,email,contactNumber,password,address}=req.body;
+        const {name,email,contactNumber,password}=req.body;
         if(!name || !email || !contactNumber || !address){
             return res.status(400).json({message:"Input fields cannot be left blank"});
         }
@@ -17,7 +17,6 @@ export const signup = async(req,res)=>{
             email,
             contactNumber,
             password:hashedPassword,
-            address,
             role:"farmer"
         });
         await newFarmer.save();

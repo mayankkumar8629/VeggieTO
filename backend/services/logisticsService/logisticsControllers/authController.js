@@ -3,7 +3,7 @@ import Admin from "../../../adminModel/admin.model.js";
 
 export const signup = async(req,res)=>{
     try{
-        const {name,email,password,contactNumber,passcode,address}=req.body;
+        const {name,email,password,contactNumber,passcode}=req.body;
         if(!name || !email || !contactNumber){
             return res.status(400).json({message:"Fields connot be empty"});
         }
@@ -21,7 +21,6 @@ export const signup = async(req,res)=>{
             password:hashedPassword,
             contactNumber,
             role:"admin",
-            address
         });
         await newAdmin.save();
         return res.status(201).json({

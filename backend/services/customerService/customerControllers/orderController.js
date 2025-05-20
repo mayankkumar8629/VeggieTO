@@ -155,6 +155,7 @@ export const verifyPayment = async (req,res)=>{
         //returning success resposnse
         return res.status(200).json({
             success:true,
+            eventPayLoad,
             message:"Payment verified successfully",
             order:updatedOrder
         });

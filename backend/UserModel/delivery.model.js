@@ -27,10 +27,6 @@ const deliverySchema = new Schema({
         ],
         default:'pending'
     },
-    estimateTime:{
-        type:Number,
-        default:15
-    },
     contact:{
         type:Number
     },
