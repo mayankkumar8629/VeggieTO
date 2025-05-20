@@ -58,10 +58,10 @@ const Navbar = () => {
     e.preventDefault();
     try {
       // Send signup request
-      const res = await axios.post(`http://localhost:3000/api/${userRole}/signup`, {
+      const res = await axios.post(`http://localhost:3000/api/signup`, {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone,
+        contactNumber: formData.phone,
         password: formData.password,
         role: userRole,
       });
