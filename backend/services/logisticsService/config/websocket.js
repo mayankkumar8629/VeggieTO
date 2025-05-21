@@ -3,10 +3,17 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config({path:"../../../.env"});
 
-const activeRiders = new Map();
+export const activeRiders = new Map();
 
 export function initSocket(server){
-    const io = new Server(server);
+    const io = new Server(server,{
+        cors: {
+            origin: "*", // Allow all origins (for development)
+            methods: ["GET", "POST"],
+            allowedHeaders: ["Authorization"],
+            credentials: true
+        }
+    });
 
     //authentication middleware
     io.use((socket,next)=>{
@@ -17,6 +24,7 @@ export function initSocket(server){
         try{
             const {riderId}=jwt.verify(token,process.env.JWT_SECRET);
             socket.riderId = riderId;
+            console.log('Rider authenticated:',riderId);
             next();
         }catch(err){
             next(new Error('Authentication error'));
@@ -24,18 +32,22 @@ export function initSocket(server){
     });
     //connection handler
     io.on('connection',(socket)=>{
-        console.log('Rider connected: ${socket.riderId}');
+        console.log('Rider connected:',socket.riderId);
         //storing the new connection in the map and marking it as available by default
         activeRiders.set(socket.riderId,{
             socket,
             isAvailable:true
         });
+        console.log(activeRiders);
 
         //handling rider availability
         socket.on('set_availability',(available)=>{
+            const rider = activeRiders.get(socket.riderId);
             if(rider){
                 rider.isAvailable=available;
-                console.log('Rider ${socket.riderId} availability:${available}');
+                console.log('Rider',socket.riderId,'availability set to',available);
+               
+                
             }
         });
         //handling disconnection

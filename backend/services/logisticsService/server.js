@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import http from "http";
 import { initSocket } from "./config/websocket.js";
+import {setupOrderListeners} from "./logisticsControllers/deliveryController.js";
+import { activeRiders } from "./config/websocket.js";
 
 import authRoute from "./logisticsRoutes/authRoute.js";
 import riderRoute from "./logisticsRoutes/riderRoute.js";
@@ -17,6 +19,7 @@ const app=express();
 const PORT = 5003;
 const server = http.createServer(app);
 initSocket(server);
+setupOrderListeners();
 
 
 app.use(
@@ -32,8 +35,14 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
+app.get("/active",(req,res)=>{
+  console.log("Active riders",activeRiders);
+  return res.status(200).json({
+    message:"Active riders",
+    activeRiders
+  })            
+  
+})
 app.use("/logistics",authRoute);
 app.use("/api/rider",riderRoute);
 

@@ -48,7 +48,7 @@ export const farmer =async(req,res)=>{
 export const logistics = async(req,res)=>{
 
     try {
-        const url = `${process.env.LOGISTIC_SERVICE_URL}${req.originalUrl.replace("/admin", "")}`;
+        const url = `${process.env.LOGISTIC_SERVICE_URL}${req.originalUrl.replace("/logistics", "")}`;
         console.log(url);
         const response = await axios({
           method: req.method,

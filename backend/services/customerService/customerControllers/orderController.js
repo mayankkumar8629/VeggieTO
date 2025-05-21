@@ -128,6 +128,7 @@ export const verifyPayment = async (req,res)=>{
                 message:"Payment verification failed"
             });
         }
+        console.log("signature matched");
         //signature macthes
         const updatedOrder = await Order.findOneAndUpdate(
             {razorpayOrderId:razorpay_order_id},

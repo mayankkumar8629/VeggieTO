@@ -27,7 +27,7 @@ const deliverySchema = new Schema({
         ],
         default:'pending'
     },
-    contact:{
+    contactNumber:{
         type:Number
     },
     failureReason:{
