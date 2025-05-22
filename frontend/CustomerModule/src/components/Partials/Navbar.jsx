@@ -25,6 +25,8 @@ const Navbar = () => {
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
   const toggleDialog = () => setDialogOpen(!dialogOpen);
+  const signupDialog = () => {setAuthTab('signup'); setDialogOpen(true);};
+  const loginDialog = () => {setAuthTab('login'); setDialogOpen(true);};
 
   const switchTab = (tab) => {
     setShowPassword(false);
@@ -84,8 +86,8 @@ const Navbar = () => {
           <a href="#">Contact Us</a>
         </div>
         <div className="hidden sm:flex items-center grow-3 text-right space-x-2 font-[Plus-Jakarta-Sans] text-lg">
-          <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={toggleDialog}>Login</button>
-          <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={toggleDialog}>Signup</button>
+          <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={loginDialog}>Login</button>
+          <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={signupDialog}>Signup</button>
         </div>
         <div className="sm:hidden">
           <button onClick={toggleDrawer}>
