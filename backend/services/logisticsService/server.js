@@ -4,7 +4,7 @@ import cors from "cors";
 import http from "http";
 import { initSocket } from "./config/websocket.js";
 import {setupOrderListeners} from "./logisticsControllers/deliveryController.js";
-import { activeRiders } from "./config/websocket.js";
+import { activeConnections } from "./config/websocket.js";
 
 import authRoute from "./logisticsRoutes/authRoute.js";
 import riderRoute from "./logisticsRoutes/riderRoute.js";
@@ -36,10 +36,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get("/active",(req,res)=>{
-  console.log("Active riders",activeRiders);
+  console.log(activeConnections.riders);
+  console.log(activeConnections.customers);
   return res.status(200).json({
     message:"Active riders",
-    activeRiders
+    activeConnections
   })            
   
 })

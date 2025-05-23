@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config({path:"../../../.env"});
 
-export const activeRiders = new Map();
+export const activeConnections = {
+    riders: new Map(),
+    customers: new Map()
+}
 
 export function initSocket(server){
     const io = new Server(server,{
@@ -18,45 +21,74 @@ export function initSocket(server){
     //authentication middleware
     io.use((socket,next)=>{
         const token = socket.handshake.auth.token;
+        console.log("Token:",token);
         if(!token){
-            return next(new Error('Authentication error'));
+            return next(new Error("Authentication error"))
         }
         try{
-            const {riderId}=jwt.verify(token,process.env.JWT_SECRET);
-            socket.riderId = riderId;
-            console.log('Rider authenticated:',riderId);
+            const {userId,role}= jwt.verify(token,process.env.JWT_SECRET);
+            socket.userId=userId;
+            socket.role=role;
+            console.log("User ID:",userId);
+            console.log("Role:",role);
+            
             next();
-        }catch(err){
-            next(new Error('Authentication error'));
+        }catch(error){
+            console.error("Authentication error:",error);
+            next(new Error("Authentication error"));
         }
-    });
+    })
     //connection handler
     io.on('connection',(socket)=>{
-        console.log('Rider connected:',socket.riderId);
-        //storing the new connection in the map and marking it as available by default
-        activeRiders.set(socket.riderId,{
-            socket,
-            isAvailable:true
-        });
-        console.log(activeRiders);
+       
+        const {userId,role}=socket;
+        //handling rider connection
+        if(role==="rider"){
+            activeConnections.riders.set(userId,{
+                socket,
+                isAvailable:true
+            });
+            console.log('Rider connected:',userId);
+        }
+        //handling customer connection
+        else if(role==="customer"){
+            activeConnections.customers.set(userId,socket);
+            console.log('Customer connected:',userId);
+        }
 
         //handling rider availability
-        socket.on('set_availability',(available)=>{
-            const rider = activeRiders.get(socket.riderId);
-            if(rider){
-                rider.isAvailable=available;
-                console.log('Rider',socket.riderId,'availability set to',available);
-               
-                
-            }
-        });
+        if(role === 'rider'){
+            socket.on('set_availability',(available)=>{
+                const rider = activeConnections.riders.get(userId);
+                if(rider){
+                    rider.isAvailable = available;
+                    console.log(`Rider ${userId} is now ${available ? 'available' : 'not available'}`);
+                }
+            });   
+        }
         //handling disconnection
         socket.on('disconnect',()=>{
-            activeRiders.delete(socket.riderId);
-            console.log('Rider disconnected: ${socket.riderId}');
+           if(role==="rider"){
+                activeConnections.riders.delete(userId);
+                console.log("Rider disconnected:",userId);
+           }else if(role ==="customer"){
+                activeConnections.customers.delete(userId);
+                console.log("Customer disconnected:",userId);
+           }
         });
 
     });
+}
+//function to notify the custome
+export function notifyCustomer (customerId,event,data){
+    const customerSocket = activeConnections.customers.get(customerId);
+    if(customerSocket){
+        try{
+            customerSocket.emit(event,data);
+        }catch(error){
+            console.error("Error notifying customer",error);
+        }
+    }
 }
 
 //function to notify all the ridrs
@@ -66,7 +98,7 @@ export function notifyAvailableRiders(event,data){
     activeRiders.forEach((rider)=>{
         if(rider.isAvailable){
             try{
-                rider.socket.emit(event,data);
+                activeConnections.riders.socket.emit(event,data);
                 count++;
             }catch(error){
                 console.error("Error notifying rider",error);

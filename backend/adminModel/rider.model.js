@@ -33,6 +33,10 @@ const riderSchema = new Schema({
         type:Boolean,
         default:true
     },
+    role:{
+        type:String,
+        default:"rider"
+    },
     createdAt:{
         type:Date,
         default:Date.now
