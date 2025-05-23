@@ -26,10 +26,10 @@ export function initSocket(server){
             return next(new Error("Authentication error"))
         }
         try{
-            const {userId,role}= jwt.verify(token,process.env.JWT_SECRET);
-            socket.userId=userId;
+            const {id,role}= jwt.verify(token,process.env.JWT_SECRET);
+            socket.id=id;
             socket.role=role;
-            console.log("User ID:",userId);
+            console.log("User ID:",id);
             console.log("Role:",role);
             
             next();
@@ -41,39 +41,39 @@ export function initSocket(server){
     //connection handler
     io.on('connection',(socket)=>{
        
-        const {userId,role}=socket;
+        const {id,role}=socket;
         //handling rider connection
         if(role==="rider"){
-            activeConnections.riders.set(userId,{
+            activeConnections.riders.set(id,{
                 socket,
                 isAvailable:true
             });
-            console.log('Rider connected:',userId);
+            console.log('Rider connected:',id);
         }
         //handling customer connection
         else if(role==="customer"){
-            activeConnections.customers.set(userId,socket);
-            console.log('Customer connected:',userId);
+            activeConnections.customers.set(id,socket);
+            console.log('Customer connected:',id);
         }
 
         //handling rider availability
         if(role === 'rider'){
             socket.on('set_availability',(available)=>{
-                const rider = activeConnections.riders.get(userId);
+                const rider = activeConnections.riders.get(id);
                 if(rider){
                     rider.isAvailable = available;
-                    console.log(`Rider ${userId} is now ${available ? 'available' : 'not available'}`);
+                    console.log(`Rider ${id} is now ${available ? 'available' : 'not available'}`);
                 }
             });   
         }
         //handling disconnection
         socket.on('disconnect',()=>{
            if(role==="rider"){
-                activeConnections.riders.delete(userId);
-                console.log("Rider disconnected:",userId);
+                activeConnections.riders.delete(id);
+                console.log("Rider disconnected:",id);
            }else if(role ==="customer"){
-                activeConnections.customers.delete(userId);
-                console.log("Customer disconnected:",userId);
+                activeConnections.customers.delete(id);
+                console.log("Customer disconnected:",id);
            }
         });
 

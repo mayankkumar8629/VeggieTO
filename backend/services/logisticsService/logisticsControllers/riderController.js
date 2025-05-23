@@ -53,7 +53,7 @@ export const riderLogin = async(req,res)=>{
             return res.status(400).json({message:"Password does not match"});
         }
         const token = jwt.sign(
-            {riderId:rider._id,email:rider.email},
+            {id:rider._id,email:rider.email,role:rider.role},
             process.env.JWT_SECRET,
             {expiresIn:"1d"}
         );
@@ -73,7 +73,7 @@ export const riderLogin = async(req,res)=>{
 }
 export const riderDeliveryAccept = async(req,res)=>{
     const {deliveryId}=req.body;
-    const riderId = req.user.riderId;
+    const riderId = req.user.id;
     try{
         if(!deliveryId){
             return res.status(400).json({message:"Please provide deliveryId"});
@@ -115,7 +115,7 @@ export const riderDeliveryAccept = async(req,res)=>{
 ///when rider picks up the order 
 export const riderDeliveryPickup = async(req,res)=>{
     const {deliveryId}=req.body;
-    const riderId = req.user.riderId;
+    const riderId = req.user.id;
     try{
         const delivery = await Delivery.findOneAndUpdate(
             {
@@ -150,7 +150,7 @@ export const riderDeliveryPickup = async(req,res)=>{
 //delievery completed
 export const riderDeliveryComplete = async(req,res)=>{
     const {deliveryId}=req.body;
-    const riderId = req.user.riderId;
+    const riderId = req.user.id;
     try{
         const delivery = await Delivery.findOneAndUpdate(
             {
@@ -178,5 +178,8 @@ export const riderDeliveryComplete = async(req,res)=>{
             message:"Delivery completed successfully",
             delivery
         });
+    }catch(error){
+        console.error("Error in riderDeliveryComplete:",error);
+        return res.status(500).json({message:"Internal server error"});
     }
 }
