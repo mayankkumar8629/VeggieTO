@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config({path:"../../.env"})
+// dotenv.config({path:"../../../.env"});
 
 export const authenticateToken =async (req, res, next) => {
     // Extract token from the Authorization header (format: "Bearer <token>")

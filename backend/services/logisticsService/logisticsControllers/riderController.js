@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { notifyCustomer } from "../config/websocket.js";
 import Delivery from "../../../UserModel/delivery.model.js";
 
+
 export const riderSignup = async(req,res)=>{
     try{
         const {name,email,password,contactNumber,address}=req.body;
