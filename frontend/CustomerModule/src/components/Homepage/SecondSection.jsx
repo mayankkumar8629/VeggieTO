@@ -1,7 +1,7 @@
 import React from 'react';
 import TickCard from './Utilities/TickCard';
 
-export const SecondSection = () => {
+ const SecondSection = () => {
   return (
     <div className="flex flex-col-reverse lg:flex-row justify-between items-start gap-12 px-6 py-14 bg-white">
       
@@ -36,3 +36,5 @@ export const SecondSection = () => {
     </div>
   );
 };
+
+export default SecondSection;

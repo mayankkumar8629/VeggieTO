@@ -1,6 +1,6 @@
 import bg from "../../assets/bg6.png";
 
-export const SixthSection = () => {
+const SixthSection = () => {
   return (
     <div className="flex flex-col lg:flex-row m-16 rounded-2xl px-6 py-27 relative"
     style={{
@@ -30,3 +30,6 @@ export const SixthSection = () => {
     </div>
   );
 };
+
+
+export default SixthSection;

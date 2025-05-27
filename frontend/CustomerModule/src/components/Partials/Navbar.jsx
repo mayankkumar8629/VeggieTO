@@ -4,6 +4,7 @@ import logo from '../../assets/krishi.svg';
 import login from '../../assets/login.png';
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 import axios from 'axios'; // Required for sending requests
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,12 +46,15 @@ const Navbar = () => {
     e.preventDefault();
     try {
       // Send login request
-      const res = await axios.post(`http://localhost:3000/api/${userRole}/login`, {
+      const res = await axios.post(`http://localhost:3000/api/login`, {
         email: formData.email,
         password: formData.password,
         role: userRole,
       });
       console.log('Login successful', res.data);
+      sessionStorage.setItem('token', res.data.token);
+      console.log(sessionStorage.getItem('token'));
+
     } catch (error) {
       console.error('Login failed', error);
     }
@@ -75,17 +79,17 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex justify-around items-center py-4 px-2 shadow-md bg-white">
+      <div className="flex justify-around items-center px-2 shadow-md bg-white">
         <div className="flex-intial grow-3 w-12 md:w-10 sm:w-8">
           <img className="h-auto w-full" src={logo} alt="Logo" />
         </div>
         <div className="hidden sm:flex items-center grow-7 justify-start space-x-5 font-[Plus-Jakarta-Sans] text-lg">
           <a href="#">Home</a>
           <a href="#">About us</a>
-          <a href="#">Products</a>
+          <Link to="/products">Products</Link>
           <a href="#">Contact Us</a>
         </div>
-        <div className="hidden sm:flex items-center grow-3 text-right space-x-2 font-[Plus-Jakarta-Sans] text-lg">
+        <div className="hidden sm:flex items-center grow-3 justify-end px-4 space-x-2 font-[Plus-Jakarta-Sans] text-lg">
           <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={loginDialog}>Login</button>
           <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={signupDialog}>Signup</button>
         </div>
@@ -100,7 +104,7 @@ const Navbar = () => {
         <div className="sm:hidden flex flex-col items-center space-y-4 p-4 bg-white shadow-md">
           <a href="#">Home</a>
           <a href="#">About us</a>
-          <a href="#">Products</a>
+          <Link to="/products">Products</Link>
           <a href="#">Contact Us</a>
           <button onClick={toggleDialog} className="border rounded-full px-4 py-1">Login / Signup</button>
         </div>

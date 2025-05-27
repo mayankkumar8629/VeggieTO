@@ -28,3 +28,4 @@ export const ThirdSection = () => {
         </div>
     )
 }
+export default ThirdSection;
