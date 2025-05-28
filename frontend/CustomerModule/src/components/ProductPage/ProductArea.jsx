@@ -19,6 +19,9 @@ export const ProductArea = () => {
       }
     })
       .then(response => {
+        response.data.map(product => {
+          product.images ="https://picsum.photos/800";  
+        });
         setProducts(response.data);  // Update state with product list
       })
       .catch(error => {
@@ -29,7 +32,8 @@ export const ProductArea = () => {
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     if (categories.includes(value)) {
-      setCategories(categories.filter(cat => cat !== value));  // Uncheck
+      setCategories(categories.filter(cat => cat !== value));
+      setProducts(products.filter(product => product.category !== value));  
     } else {
       setCategories([...categories, value]);  // Check
       console.log('Selected categories:', [...categories, value]);
@@ -42,7 +46,11 @@ export const ProductArea = () => {
       }
     })
       .then(response => {
+        response.data.map(product => {
+          product.images ="https://picsum.photos/800";  
+        })
         setProducts(prevProducts => [...prevProducts, ...response.data]);  // Update state with product list
+        
         console.log('Products fetched:', response.data);
       })
       .catch(error => {
@@ -63,10 +71,10 @@ export const ProductArea = () => {
   };
 
   return (
-    <div className="flex flex-row max-w-[75%] mx-auto justify-center gap-4">
+    <div className="flex flex-row max-w-[95%] mx-auto justify-center gap-4">
       {/* Sidebar */}
       <div className="flex-col hidden sm:flex w-1/4">
-        <div className="flex items-center justify-center p-4 border-b-2 border-gray-200">
+        <div className="flex items-center justify-start p-2 border-b-2 border-gray-200">
           <span className="text-xl font-bold">Product Category</span>
         </div>
         <form className="flex flex-col p-4" onSubmit={handleFilterSubmit}>
@@ -97,7 +105,7 @@ export const ProductArea = () => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {products.map((product) => (
-              <ProductCard Image={product.images} Name={product.name} Category={product.category} price={product.price} />
+              <ProductCard id={product._id} Image={product.images} Name={product.name} Category={product.category} price={product.price} />
             ))}
           </div>
         )}

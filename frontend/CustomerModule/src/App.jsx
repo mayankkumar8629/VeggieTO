@@ -11,6 +11,7 @@ import Footer from './components/Partials/Footer';
 import './App.css';
 import './index.css';
 import { ProductArea } from './components/ProductPage/ProductArea';
+import { Cart } from './components/Carts/Cart';
 
 function App() {
   return (
@@ -38,6 +39,16 @@ function App() {
             <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
               <Navbar />
               <ProductArea />
+              <Footer />
+            </div>
+          } 
+        />
+         <Route 
+          path="/cart" 
+          element={
+            <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
+              <Navbar />
+              <Cart />
               <Footer />
             </div>
           } 

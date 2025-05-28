@@ -5,6 +5,8 @@ import login from '../../assets/login.png';
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 import axios from 'axios'; // Required for sending requests
 import { Link } from 'react-router-dom';
+import { CgProfile } from 'react-icons/cg';
+import { MdOutlineShoppingCart } from 'react-icons/md';
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -12,6 +14,7 @@ const Navbar = () => {
   const [authTab, setAuthTab] = useState('login');
   const [userRole, setUserRole] = useState('customer');
   const [showPassword, setShowPassword] = useState(false);
+  const loggedIn = sessionStorage.getItem('token') ? true : false;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -84,15 +87,22 @@ const Navbar = () => {
           <img className="h-auto w-full" src={logo} alt="Logo" />
         </div>
         <div className="hidden sm:flex items-center grow-7 justify-start space-x-5 font-[Plus-Jakarta-Sans] text-lg">
-          <a href="#">Home</a>
+          <Link to="/">Home</Link>
           <a href="#">About us</a>
           <Link to="/products">Products</Link>
           <a href="#">Contact Us</a>
         </div>
+        {!loggedIn ? (
         <div className="hidden sm:flex items-center grow-3 justify-end px-4 space-x-2 font-[Plus-Jakarta-Sans] text-lg">
           <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={loginDialog}>Login</button>
           <button className="rounded-full border-2 px-3 hover:bg-gray-100 transition" onClick={signupDialog}>Signup</button>
         </div>
+        ):(
+          <div className="hidden sm:flex items-center grow-3 justify-end px-4 space-x-2 font-[Plus-Jakarta-Sans] text-lg">
+          <CgProfile size={30} className="cursor-pointer"  />
+          <Link to="/cart" ><MdOutlineShoppingCart size={30} className="cursor-pointer"  /></Link>
+        </div>
+        )}
         <div className="sm:hidden">
           <button onClick={toggleDrawer}>
             {drawerOpen ? <AiOutlineClose size={30} /> : <AiOutlineMenu size={30} />}

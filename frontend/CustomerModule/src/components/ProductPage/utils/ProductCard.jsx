@@ -1,9 +1,21 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 
-export const ProductCard = ({ Image, Name, Category, price }) => {
+export const ProductCard = ({ id, Image, Name, Category, price }) => {
   const [quantity, setQuantity] = useState(0);  // Start with 0 for "Add to Cart"
 
-  const handleAddtoCart = () => {
+  const handleAddtoCart = async () => {
+    console.log(sessionStorage.getItem('token'));
+    console.log('Adding item to cart:', id);
+     await axios.post('http://localhost:3000/api/customer/cart/addNewItem',
+    {
+        itemId: id,
+     },
+     {
+     headers:{
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+     }
+    })
     setQuantity(1);  // Set quantity to 1 when Add to Cart is clicked
   };
 
