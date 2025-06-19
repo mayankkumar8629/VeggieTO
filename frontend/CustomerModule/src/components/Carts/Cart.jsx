@@ -1,55 +1,151 @@
-import React, { useEffect, useState } from 'react'
-import { CartCard } from './utils/CartCard' // Assuming CartCard is imported
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { CartCard } from './utils/CartCard';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 export const Cart = () => {
-  // Sample cart items state
-  const [cartItems, setCartItems] = useState([
-  ]);
-  useEffect(()=>{
-    const fetchCartItems = async () => {
-      try{
-        const response = await axios.get('http://localhost:3000/api/customer/cart/getCart',{
-          headers:{
-            Authorization: `Bearer ${sessionStorage.getItem('token')}`
-          }
-        })
-        setCartItems(response.data.cart.items); 
-      }catch(error){
-        console.error('Error fetching cart items:', error);
-      }
+  const [cartItems, setCartItems] = useState([]);
+
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/customer/cart/getCart', {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        }
+      });
+      setCartItems(response.data.cart.items);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+      toast.error('Failed to load cart');
     }
+  };
+
+  useEffect(() => {
     fetchCartItems();
-  },[]);
-  // Functions for updating quantity and deleting items
-  const handleIncrement = (id) => {
-    setCartItems(cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    ))
-  }
+  }, []);
 
-  const handleDecrement = (id) => {
-    setCartItems(cartItems.map(item =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    ))
-  }
+  const handleIncrement = async (id) => {
+    const response = await axios.patch('http://localhost:3000/api/customer/cart/updateItem', {
+      itemId: id,
+      action: "increment",
+    }, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    setCartItems(response.data.cart.items);
+  };
 
-  const handleDelete = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id))
-  }
+  const handleDecrement = async (id) => {
+    const response = await axios.patch('http://localhost:3000/api/customer/cart/updateItem', {
+      itemId: id,
+      action: "decrement"
+    }, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    setCartItems(response.data.cart.items);
+  };
 
-  const totalPrice = cartItems.reduce((total, item) => total + item.itemId.price * item.quantity, 0)
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/customer/cart/removeItem/${id}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        }
+      });
+      setCartItems(cartItems.filter(item => item.itemId._id !== id));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      toast.error('Failed to delete item');
+    }
+  };
+
+  const totalPrice = cartItems.reduce((total, item) => total + item.itemId.price * item.quantity, 0);
+
+  const handleCheckout = async () => {
+    const res = await loadRazorpayScript();
+    if (!res) {
+      toast.error("Razorpay SDK failed to load");
+      return;
+    }
+
+    try {
+      // const result = await axios.post('http://localhost:3000/api/payment/createOrder', {
+      //   amount: totalPrice
+      // }, {
+      //   headers: {
+      //     Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      //   }
+      // });
+
+      //const { id: order_id, amount, currency } = result.data;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        "amount": "55000",        
+        "currency": "INR",
+        name: "Your Store",
+        description: "Order Payment",
+        "order_id": "order_QXiNrkwBQvaKWC",
+        handler: async function (response) {
+          toast.success('Payment Successful!');
+          console.log('Razorpay Response:', response);
+
+          // Optional: You can store order info to backend
+          // await axios.post('http://localhost:3000/api/payment/verify', {
+          //   razorpay_payment_id: response.razorpay_payment_id,
+          //   razorpay_order_id: response.razorpay_order_id,
+          //   razorpay_signature: response.razorpay_signature
+          // }, {
+          //   headers: {
+          //     Authorization: `Bearer ${sessionStorage.getItem('token')}`
+          //   }
+          // });
+
+          // Optionally clear cart or redirect
+          setCartItems([]);
+          toast.success('Order placed successfully!');
+          fetchCartItems();
+        },
+        prefill: {
+          name: "Test User",
+          email: "test@example.com",
+          contact: "9999999999"
+        },
+        theme: {
+          color: "#3399cc"
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error('Checkout failed');
+    }
+  };
 
   return (
     <div className='flex flex-col p-4'>
+      <ToastContainer />
       <div className='mb-4'>
         <h1 className='text-2xl font-bold'>Your Cart</h1>
       </div>
 
       <div className='flex flex-col lg:flex-row gap-4'>
-        {/* Cart Items */}
         <div className='flex flex-col flex-grow space-y-4'>
           {cartItems.length > 0 ? (
             cartItems.map(item => (
@@ -59,9 +155,9 @@ export const Cart = () => {
                 category={item.itemId.category}
                 price={item.itemId.price}
                 quantity={item.quantity}
-                onIncrement={() => handleIncrement(item.id)}
-                onDecrement={() => handleDecrement(item.id)}
-                onDelete={() => handleDelete(item.id)}
+                onIncrement={() => handleIncrement(item.itemId._id)}
+                onDecrement={() => handleDecrement(item.itemId._id)}
+                onDelete={() => handleDelete(item.itemId._id)}
               />
             ))
           ) : (
@@ -69,12 +165,11 @@ export const Cart = () => {
           )}
         </div>
 
-        {/* Summary Section */}
         <div className='flex flex-col p-4 border border-gray-200 rounded-lg w-full max-w-sm'>
           <h2 className='text-xl font-semibold mb-4'>Summary</h2>
           <div className='flex justify-between mb-2'>
             <span>Subtotal</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>₹{totalPrice.toFixed(2)}</span>
           </div>
           <div className='flex justify-between mb-4'>
             <span>Shipping</span>
@@ -82,13 +177,17 @@ export const Cart = () => {
           </div>
           <div className='flex justify-between font-bold text-lg'>
             <span>Total</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>₹{totalPrice.toFixed(2)}</span>
           </div>
-          <button className='mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition'>
+          <button
+            className='mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition'
+            onClick={handleCheckout}
+            disabled={cartItems.length === 0}
+          >
             Proceed to Checkout
           </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
