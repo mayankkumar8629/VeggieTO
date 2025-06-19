@@ -3,6 +3,7 @@ import axios from "axios";
 import { CartCard } from "./utils/CartCard";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -17,6 +18,7 @@ const loadRazorpayScript = () => {
 export const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [cartId, setCartId] = useState(null);
+  const navigate = useNavigate();
 
   const fetchCartItems = async () => {
     try {
@@ -29,7 +31,6 @@ export const Cart = () => {
         }
       );
       setCartId(response.data.cart._id);
-      console.log("Cart ID:", response.data);
       setCartItems(response.data.cart.items);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -104,7 +105,7 @@ export const Cart = () => {
 
     try {
       const result = await axios.post(
-        `http://localhost:3000/api/customer/order/placeOrder/${cartId}`,
+        `http://localhost:3000/api/customer/order/placeOrder/${cartId}`,{},
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -115,9 +116,7 @@ export const Cart = () => {
       const amount = result.data.order.totalPrice * 100; // Razorpay expects paise
       const currency = "INR"; // Hardcoded as your backend uses INR
 
-      console.log(result.data);
       //const { id: order_id, amount, currency } = result.data;
-      console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount.toString(),
@@ -126,7 +125,29 @@ export const Cart = () => {
         description: "Order Payment",
         order_id, // This must be the Razorpay order ID
         handler: async function (response) {
-          // Call verify API
+          try {
+            console.log("Payment response:", response);
+            const paymentResponse = await axios.post(
+              "http://localhost:3000/api/customer/order/verifyPayment",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                },
+              }
+            );
+            console.log("Payment verification response:", paymentResponse.data.message);
+            toast.success(paymentResponse.data.message);
+            navigate("/products");
+            // Optionally, redirect to a success page or clear the cart
+          } catch (error) {
+            console.error("Payment verification error:", error);
+            toast.error("Payment verification failed");
+          }
         },
         prefill: {
           name: "Test User",
