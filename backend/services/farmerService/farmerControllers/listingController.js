@@ -16,8 +16,10 @@ export const createListing = async(req,res)=>{
         const invalidItems=items.filter(item => (
             !item.itemName ||
             !item.category ||
-            !item.quantity ||
-            item.pricec=== undefined
+            !item.quantityUnit ||
+            !item.quantityValue ||
+            item.quantityValue <= 0 ||
+            item.price === undefined
         ))
         if(invalidItems.length > 0){
             return res.status(400).json({message:"Invalid items in the listing", invalidItems});

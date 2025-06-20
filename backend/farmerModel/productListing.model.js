@@ -18,10 +18,15 @@ const productListingSchema = new Schema({
                 enum:["fruits","vegetables","groceries","dairy","eggs-meat","beverages"],
                 required:true
             },
-            quantity:{
+            quantityUnit:{
                 type:String,
                 enum:["kg","litre","pcs"],
                 required:true
+            },
+            quantityValue:{
+                type:Number,
+                required:true,
+                min:0
             },
             price:{
                 type:Number,
