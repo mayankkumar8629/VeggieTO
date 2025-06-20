@@ -28,12 +28,12 @@ export const farmer =async(req,res)=>{
     try{
         const url=`${process.env.FARMER_SERVICE_URL}${req.originalUrl.replace("/farmer","")}`;
         console.log(url);
-        const reponse = await axios({
+        const response = await axios({
             method:req.method,
             url,
             data:req.body,
             params:req.query,
-            header:{
+            headers:{
                 Authorization:req.headers.authorization,
                 'Content-Type':req.headers['content-type']
             }
