@@ -9,9 +9,16 @@ export const getProfile = async (req,res)=>{
                 message:"Farmer not found"
             })
         }
+        console.log(farmer);
         return res.status(200).json({
             message:"Farmer profile fetched successfully",
-            farmer
+            farmerProfileDetails:{
+                name:farmer.name,
+                email:farmer.email,
+                contactNumber:farmer.contactNumber,
+                address:farmer.address,
+                role:farmer.role
+            }
         })
     }catch(error){
         console.error("Error fetching farmer profile",error);
