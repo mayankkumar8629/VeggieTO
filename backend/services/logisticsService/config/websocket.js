@@ -5,7 +5,8 @@ dotenv.config({path:"../../../.env"});
 
 export const activeConnections = {
     riders: new Map(),
-    customers: new Map()
+    customers: new Map(),
+    deliveryPartners: new Map()
 }
 
 export function initSocket(server){
@@ -54,6 +55,9 @@ export function initSocket(server){
         else if(role==="customer"){
             activeConnections.customers.set(id,socket);
             console.log('Customer connected:',id);
+        }else if(role ==="delivery-partner"){
+            activeConnections.deliveryPartners.set(id,socket);
+            console.log('Delivery Partner connected:',id);
         }
 
         //handling rider availability
@@ -79,7 +83,7 @@ export function initSocket(server){
 
     });
 }
-//function to notify the custome
+//function to notify the customer
 export function notifyCustomer (customerId,event,data){
     const customerSocket = activeConnections.customers.get(customerId);
     if(customerSocket){
@@ -109,3 +113,5 @@ export function notifyAvailableRiders(event,data){
     console.log(`Available riders notified :${count}`);
     return count;
 }
+
+//functin to notify all the delivery partners
