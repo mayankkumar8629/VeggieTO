@@ -7,8 +7,12 @@ import { FaSlidersH } from 'react-icons/fa';
 export const ProductArea = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [price, setPrice] = useState(1000);
+  const [price, setPrice] = useState(2000);
   const [cartItems, setCartItems] = useState([]);
+   const [minValue, setMinValue] = useState(0);
+  const [maxValue, setMaxValue] = useState(900);
+  const [allProducts, setAllProducts] = useState([]);
+
 
   const token = sessionStorage.getItem('token');
   const categoryOptions = ['fruits', 'vegetables', 'groceries', 'dairy', 'beverages', 'eggs-meat'];
@@ -33,11 +37,13 @@ export const ProductArea = () => {
   };
 
   const fetchInitialProducts = async () => {
-    const initialCategory = 'fruits';
-    const initialProducts = await fetchProductsByCategory(initialCategory);
-    setProducts(initialProducts);
-    setCategories([initialCategory]);
-  };
+  const initialCategory = 'fruits';
+  const initialProducts = await fetchProductsByCategory(initialCategory);
+  setAllProducts(initialProducts); // Store full data
+  setProducts(initialProducts);    // Display full initially
+  setCategories([initialCategory]);
+};
+
 
   const fetchCartItems = async () => {
     try {
@@ -55,33 +61,57 @@ export const ProductArea = () => {
     fetchCartItems();
   }, []);
 
-  const handleCategoryChange = async (e) => {
-    const value = e.target.value;
-    const isChecked = categories.includes(value);
+ const handleCategoryChange = async (e) => {
+  const value = e.target.value;
+  const isChecked = categories.includes(value);
 
-    if (isChecked) {
-      setCategories((prev) => prev.filter((cat) => cat !== value));
-      setProducts((prev) => prev.filter((product) => product.category !== value));
-    } else {
-      const newProducts = await fetchProductsByCategory(value);
-      setCategories((prev) => [...prev, value]);
-      setProducts((prev) => [...prev, ...newProducts]);
-    }
-  };
+  if (isChecked) {
+    const newCategories = categories.filter((cat) => cat !== value);
+    setCategories(newCategories);
 
-  const handlePriceChange = (value) => setPrice(value);
+    const filtered = allProducts.filter((product) =>
+      newCategories.includes(product.category)
+    );
+    setProducts(filtered);
+  } else {
+    const newProducts = await fetchProductsByCategory(value);
+    const newCategories = [...categories, value];
 
-  const handleFilterSubmit = (e) => {
-    e.preventDefault();
-    console.log('Filters applied:', { categories, price });
-    // Add price filtering logic here if needed
-  };
+    const updatedAll = [...allProducts, ...newProducts];
+    setAllProducts(updatedAll); // update master list
 
-  const handleClearFilters = () => {
-    setCategories([]);
-    setPrice(1000);
-    setProducts([]);
-  };
+    const filtered = updatedAll.filter((product) =>
+      newCategories.includes(product.category)
+    );
+    setProducts(filtered);
+    setCategories(newCategories);
+  }
+};
+
+
+ const handlePriceFilterChange = () => {
+  const filtered = allProducts.filter(
+    (product) =>
+      categories.includes(product.category) &&
+      product.price >= minValue &&
+      product.price <= maxValue
+  );
+  setProducts(filtered);
+};
+
+const handleFilterSubmit = (e) => {
+  e.preventDefault();
+  handlePriceFilterChange(); // Reuse the same filtering logic
+};
+
+
+ const handleClearFilters = () => {
+  setCategories([]);
+  setMinValue(0);
+  setMaxValue(1000);
+  setProducts(allProducts); // Show full data again
+};
+
 
   return (
     <div className="flex flex-row max-w-[95%] mx-auto justify-center gap-4">
@@ -122,7 +152,7 @@ export const ProductArea = () => {
 
     <div>
       <label className="block text-lg font-semibold mb-2">Filter by Price</label>
-      <Slider value={price} onChange={handlePriceChange} />
+      <Slider value={price} onChange={handlePriceFilterChange}  minValue={minValue} maxValue={maxValue} setMaxValue={setMaxValue} setMinValue={setMinValue}/>
     </div>
 
     <input

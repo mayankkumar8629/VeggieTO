@@ -1,8 +1,7 @@
-import { useState } from 'react';
 
-export const Slider = () => {
-  const [minValue, setMinValue] = useState(0);
-  const [maxValue, setMaxValue] = useState(900);
+
+export const Slider = ({maxValue, minValue, setMaxValue, setMinValue}) => {
+ 
 
   const min = 0;
   const max = 1000;
