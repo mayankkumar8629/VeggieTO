@@ -4,7 +4,7 @@ import logo from '../../assets/krishi.svg';
 import login from '../../assets/login.png';
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 import axios from 'axios'; // Required for sending requests
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { CgProfile } from 'react-icons/cg';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 
@@ -55,6 +55,7 @@ const Navbar = () => {
         role: userRole,
       });
       console.log('Login successful', res.data);
+      setDialogOpen(false);
       sessionStorage.setItem('token', res.data.token);
       console.log(sessionStorage.getItem('token'));
 
@@ -74,6 +75,13 @@ const Navbar = () => {
         password: formData.password,
         role: userRole,
       });
+      const loginRes = await axios.post(`http://localhost:3000/api/login`, {
+        email: formData.email,
+        password: formData.password,
+        role: userRole,
+      });
+      setDialogOpen(false);
+      sessionStorage.setItem('token', loginRes.data.token);
       console.log('Signup successful', res.data);
     } catch (error) {
       console.error('Signup failed', error);

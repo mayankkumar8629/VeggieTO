@@ -12,6 +12,7 @@ import './App.css';
 import './index.css';
 import { ProductArea } from './components/ProductPage/ProductArea';
 import { Cart } from './components/Carts/Cart';
+import OrderSummary from './components/OrderSummary/OrderSummary';
 
 function App() {
   return (
@@ -49,6 +50,16 @@ function App() {
             <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
               <Navbar />
               <Cart />
+              <Footer />
+            </div>
+          } 
+        />
+        <Route 
+          path="/orderSummary" 
+          element={
+            <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
+              <Navbar />
+              <OrderSummary />
               <Footer />
             </div>
           } 

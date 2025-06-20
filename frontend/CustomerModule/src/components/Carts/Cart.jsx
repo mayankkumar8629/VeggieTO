@@ -76,15 +76,18 @@ export const Cart = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3000/api/customer/cart/removeItem/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        }
-      );
-      setCartItems(cartItems.filter((item) => item.itemId._id !== id));
+     await axios.delete(
+      `http://localhost:3000/api/customer/cart/deleteItem`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        data: {
+          itemId: id,
+        },
+      }
+    );
+      fetchCartItems(); 
     } catch (error) {
       console.error("Error deleting item:", error);
       toast.error("Failed to delete item");
@@ -140,9 +143,11 @@ export const Cart = () => {
                 },
               }
             );
-            console.log("Payment verification response:", paymentResponse.data.message);
+            console.log("Payment verification response:", paymentResponse.data);
+            const orderData = paymentResponse.data.order;
             toast.success(paymentResponse.data.message);
-            navigate("/products");
+            fetchCartItems(); 
+            navigate("/orderSummary", {state: { orderData } }); // Redirect to products page with order data
             // Optionally, redirect to a success page or clear the cart
           } catch (error) {
             console.error("Payment verification error:", error);

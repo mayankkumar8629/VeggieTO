@@ -27,7 +27,7 @@ export const CartCard = ({ name, category, price, quantity, onDelete, onIncremen
 
         {/* Bottom Row: Price and Quantity Counter */}
         <div className='flex justify-between items-center mt-2'>
-          <div className='text-lg font-semibold'>${price.toFixed(2)}</div>
+          <div className='text-lg font-semibold'>₹{price.toFixed(2)}</div>
           <div className='flex items-center space-x-2'>
             <button onClick={onDecrement} className='border rounded-full px-2 py-1 hover:bg-gray-200'>
               <AiOutlineMinus />
