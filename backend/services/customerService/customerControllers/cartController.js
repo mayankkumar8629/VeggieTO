@@ -136,9 +136,11 @@ export const updateCartItem = async (req, res) => {
     try {
       await runTransaction(async (session) => {
         const { itemId } = req.body;
-        const { action } = req.query;
+        const { action } = req.body;
         const userId = req.user.id;
-  
+        console.log(itemId);
+        console.log(req.query);
+        console.log(action)
         // Validate inputs
         if (!mongoose.Types.ObjectId.isValid(itemId)) {
           throw { status: 400, message: "Invalid item id" };
