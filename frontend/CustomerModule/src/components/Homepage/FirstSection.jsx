@@ -58,7 +58,7 @@ const FirstSection = () => {
       </div>
       <div className="flex justify-center">
         <div className="flex-initial ">
-          <button className="rounded-full border-2 py-2 px-5 shadow-md hover:shadow-lg transition-all duration-300">
+          <button className="btn rounded-full border-2 py-2 px-5 shadow-md hover:shadow-lg transition-all duration-300">
             Shop Now
           </button>
         </div>

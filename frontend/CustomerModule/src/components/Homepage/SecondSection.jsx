@@ -29,7 +29,7 @@ import TickCard from './Utilities/TickCard';
         <p className="text-lg font-[Plus-Jakarta-Sans] text-gray-700">
           Curious why Krishi stands out as the go-to choice for premium groceries? Our dedication to quality, convenience, and freshness transforms every shopping trip into a delightful and satisfying experience. Discover how Krishi makes your culinary journey exceptional, every step of the way.
         </p>
-        <button className="rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
+        <button className="btn rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
           Learn More
         </button>
       </div>

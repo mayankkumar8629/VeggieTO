@@ -30,7 +30,7 @@ const PreSecondSection = () => {
                     </div>
                 </div>
 
-                <button className="rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
+                <button className="btn rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
                     Discover More
                 </button>
             </div>

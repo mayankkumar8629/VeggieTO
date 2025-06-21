@@ -1,6 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const DiscoverCard = ({ title, description, imgUrl }) => {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate('/products');
+    };
     return (
         <div className='flex     flex-row w-1/2 items-center gap-4 sm:gap-6 pl-6 m-3 pb-0 bg-white rounded-3xl shadow-md hover:shadow-lg transition-all duration-300'>
             <div className='flex-initial space-y-4'>
@@ -10,7 +15,7 @@ const DiscoverCard = ({ title, description, imgUrl }) => {
                 <p className='text-sm sm:text-base text-gray-500 mt-1 font-[Plus-Jakarta-Sans]'>
                     {description}
                 </p>
-                <button className='mt-2 rounded-full border-2 py-2 px-5 shadow-md hover:shadow-lg transition-all duration-300'>
+                <button className='mt-2 btn rounded-full border-2 py-2 px-5 shadow-md hover:shadow-lg transition-all duration-300' onClick={handleClick}>
                     Shop Now
                 </button>
             </div>

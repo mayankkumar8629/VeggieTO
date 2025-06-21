@@ -40,7 +40,7 @@ const FourthSection = () => {
             <p className="text-lg font-[Plus-Jakarta-Sans] text-gray-700">
             Krishi delivers innovation right to your fingertips with a suite of advanced features designed to elevate your shopping experience. Discover what makes Krishi unique and enjoy a seamless, effortless approach to grocery shopping.
         </p>
-        <button className="rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
+        <button className="btn rounded-full border-2 py-2 px-6 shadow-md hover:shadow-lg transition-all duration-300">
           Read More
         </button>
                 <div className="flex flex-col  items-start  text-left w-full py-6">

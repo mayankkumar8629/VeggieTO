@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import ProfileMenu from "./utils/ProfileMenu";
+import SearchBar from "./utils/SearchBar";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -96,7 +97,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex justify-around items-center px-2 shadow-md bg-white">
+      <div className="flex justify-around items-center p-3.5 shadow-md bg-white">
         <div className="flex-intial grow-3 w-12 md:w-10 sm:w-8">
           <img className="h-auto w-full" src={logo} alt="Logo" />
         </div>
@@ -106,16 +107,19 @@ const Navbar = () => {
           <Link to="/products">Products</Link>
           <a href="#">Contact Us</a>
         </div>
+        <div className="hidden sm:flex items-center grow-7 justify-start space-x-5 font-[Plus-Jakarta-Sans] text-lg">
+          <SearchBar />
+        </div>
         {!loggedIn ? (
           <div className="hidden sm:flex items-center grow-3 justify-end px-4 space-x-2 font-[Plus-Jakarta-Sans] text-lg">
             <button
-              className="rounded-full border-2 px-3 hover:bg-gray-100 transition"
+              className="btn rounded-full border-2 px-3 hover:bg-gray-100 transition"
               onClick={loginDialog}
             >
               Login
             </button>
             <button
-              className="rounded-full border-2 px-3 hover:bg-gray-100 transition"
+              className="btn rounded-full border-2 px-3 hover:bg-gray-100 transition"
               onClick={signupDialog}
             >
               Signup
@@ -145,7 +149,7 @@ const Navbar = () => {
           <a href="#">Contact Us</a>
           <button
             onClick={toggleDialog}
-            className="border rounded-full px-4 py-1"
+            className="border rounded-full px-4 py-1 btn"
           >
             Login / Signup
           </button>

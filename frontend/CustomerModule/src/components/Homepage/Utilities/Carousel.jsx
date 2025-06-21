@@ -28,7 +28,7 @@ const Carousel = ({ cards }) => {
                 <button
                     onClick={handlePrev}
                     disabled={startIndex === 0}
-                    className={`p-2 rounded-full border-gray-400 border ${
+                    className={`btn p-2 rounded-full border-gray-400 border ${
                         startIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600 hover:text-white'
                     }`}
                 >
@@ -37,7 +37,7 @@ const Carousel = ({ cards }) => {
                 <button
                     onClick={handleNext}
                     disabled={startIndex >= cards.length - visibleCount}
-                    className={`p-2 rounded-full border-gray-400 border ${
+                    className={`btn p-2 rounded-full border-gray-400 border ${
                         startIndex >= cards.length - visibleCount
                             ? 'opacity-50 cursor-not-allowed'
                             : 'hover:bg-green-600 hover:text-white'

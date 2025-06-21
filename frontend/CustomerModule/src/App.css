@@ -1,1 +1,27 @@
+.btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.6rem 1.8rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 20px; /* Fully rounded (pill shape) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.btn:hover {
+  background-color: #ffffff;
+  border: #4caf50 2px solid;
+  color: #4caf50;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: scale(1.5);
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
+}

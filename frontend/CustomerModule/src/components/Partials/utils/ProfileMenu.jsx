@@ -23,6 +23,7 @@ const ProfileMenu = () => {
   const handleLogout = () => {
     sessionStorage.removeItem('token');
     navigate("/");
+    window.location.reload();
   };
 
   return (
