@@ -25,7 +25,7 @@ export const Slider = ({maxValue, minValue, setMaxValue, setMinValue}) => {
 
         {/* Active Range */}
         <div
-          className="absolute top-1/2 h-1 bg-blue-500 rounded-full transform -translate-y-1/2 transition-all duration-300 ease-in-out"
+          className="absolute top-1/2 h-1 bg-[#4caf50] rounded-full transform -translate-y-1/2 transition-all duration-300 ease-in-out"
           style={{
             left: `${(minValue / max) * 100}%`,
             width: `${((maxValue - minValue) / max) * 100}%`,
@@ -61,7 +61,7 @@ export const Slider = ({maxValue, minValue, setMaxValue, setMinValue}) => {
           -webkit-appearance: none;
           height: 1.25rem; /* 20px */
           width: 1.25rem;
-          background-color: #3b82f6; /* Tailwind blue-500 */
+          background-color: #4caf50; /* Tailwind blue-500 */
           border-radius: 9999px;
           border: 2px solid white;
           cursor: pointer;
@@ -78,7 +78,7 @@ export const Slider = ({maxValue, minValue, setMaxValue, setMinValue}) => {
         input[type='range'].slider-thumb::-moz-range-thumb {
           height: 1.25rem;
           width: 1.25rem;
-          background-color: #3b82f6;
+          background-color: #4caf50;
           border-radius: 9999px;
           border: 2px solid white;
           cursor: pointer;

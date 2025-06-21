@@ -125,7 +125,7 @@ const handleFilterSubmit = (e) => {
     </div>
     <button
       type="button"
-      className="text-sm text-blue-500 hover:underline"
+      className="text-sm text-[#4caf50] hover:underline"
       onClick={handleClearFilters}
     >
       Clear
@@ -143,7 +143,7 @@ const handleFilterSubmit = (e) => {
             value={cat}
             checked={categories.includes(cat)}
             onChange={handleCategoryChange}
-            className="h-5 w-5 rounded-md border border-gray-400 text-blue-600 focus:ring-blue-500"
+            className="h-5 w-5 rounded-md border border-gray-400 text-[#4caf50] focus:ring-[#4caf5066]"
           />
           <span className="ml-3 capitalize text-gray-700">{cat.replace('-', ' & ')}</span>
         </label>
@@ -158,7 +158,7 @@ const handleFilterSubmit = (e) => {
     <input
       type="submit"
       value="Apply Filters"
-      className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded w-fit mt-2"
+      className="btn text-white font-medium py-2 px-4 rounded w-fit mt-2"
     />
   </form>
 </div>

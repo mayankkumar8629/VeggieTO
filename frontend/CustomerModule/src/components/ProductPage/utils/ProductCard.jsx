@@ -89,7 +89,7 @@ export const ProductCard = ({ id, cart, Image, Name, Category, price }) => {
     {/* Add to Cart or Quantity Controller */}
     {quantity === 0 ? (
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+        className="btn text-white px-4 py-2 rounded  transition-colors duration-300"
         onClick={handleAddtoCart}
       >
         Add to Cart
