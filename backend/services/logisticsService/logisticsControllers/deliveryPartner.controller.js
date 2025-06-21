@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config({path:"../../../.env"});
 import jwt from "jsonwebtoken";
+import Shipment from "../../../farmerModel/shipment.model.js";
 
 //delivery partner signup
 export const  signup = async(req,res)=>{
@@ -76,4 +77,40 @@ export const login = async(req,res)=>{
         console.error("Error in login ",error);
         return res.status(500).json({message:"Internal server error"});
     }
+}
+
+//delivery partner accept shipment
+export const acceptShipment = async(req,res)=>{
+    const {shipmentId}= req.body;
+    const deliveryPartnerId=req.user.id;
+    
+    const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId);
+    if(!deliveryPartner){
+        return res.status(404).json({message:"Delivery partner not found"});
+    }
+    const shipment = await Shipment.findById(shipmentId)
+    if(!shipment){
+        return res.status(404).json({message:"Shipment not found"});
+    }
+    if(shipment.status !== 'pending'){
+        return res.status(400).json({message:"Shipment alreaedy assigned or completed"});
+    }
+    const updatedShipment = await Shipment.findByIdAndUpdate(
+        shipmentId,
+        {
+            status:"confirmed",
+            deliveryPartner:deliveryPartnerId
+        },
+        {
+            new:true
+        }
+    );
+    if(!updatedShipment){
+        return res.status(500).json({message:"Failed to update shipment status"});
+    }
+    
+    return res.status(200).j
+
+
+
 }

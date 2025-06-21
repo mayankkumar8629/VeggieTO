@@ -6,7 +6,8 @@ dotenv.config({path:"../../../.env"});
 export const activeConnections = {
     riders: new Map(),
     customers: new Map(),
-    deliveryPartners: new Map()
+    deliveryPartners: new Map(),
+    vendors: new Map()
 }
 
 export function initSocket(server){
@@ -68,7 +69,7 @@ export function initSocket(server){
             socket.on('set_availability',(available)=>{
                 
                 const connectionMap = role==='rider'
-                ?activeConnections.riders
+                ?activeConnections.riders     
                 :activeConnections.deliveryPartners;
 
                 const user= connectionMap.get(id);
@@ -137,3 +138,4 @@ export function notifyAvailableDeliveryPartners(event,data){
     console.log(`Notified Count is: ${notifiedCount}`);
     return notifiedCount;
 }
+//function to notify the vendor

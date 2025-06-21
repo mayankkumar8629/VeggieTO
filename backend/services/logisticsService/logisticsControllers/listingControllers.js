@@ -1,6 +1,7 @@
 import ProductListing from "../../../farmerModel/productListing.model.js";
 import DeliveryPartner from "../../../adminModel/deliveryPartner.model.js";
 import Shipment from "../../../farmerModel/shipment.model.js";
+import {notifyAvailableDeliveryPartners} from "../config/websocket.js";
 
 //action on the listing by the vendor
 export const actionOnProductListing = async(req,res)=>{
@@ -74,6 +75,16 @@ export const actionOnProductListing = async(req,res)=>{
                 }
                 throw new Error("Failed to update listing or create shipment");
             }
+            const shipmentDetails = {
+                shipmentId:shipment._id,
+                listingId:updatedListing._id,
+                pickupDate:shipment.pickupDate,
+                pickupLocation:shipment.pickupLocation,
+                farmerId:shipment.farmer,
+                createdAt:Date.now()
+            }
+            const notifiedCount = notifyAvailableDeliveryPartners('new_shipment', shipmentDetails);
+            console.log(`Notified ${notifiedCount} delivery partners about new shipment`);
 
             return res.status(200).json({
                 message:"listing approved successfully and shipment created",

@@ -19,7 +19,7 @@ const shipmentSchema = new Schema({
     },
     status:{
         type:String,
-        enum:["pending","in-transit","delivered","failed"],
+        enum:["pending","confirmed","in-transit","delivered","failed"],
         default:"pending"
     },
     failureReason:{
@@ -38,3 +38,6 @@ const shipmentSchema = new Schema({
         default:Date.now
     }
 })
+
+const Shipment = model("Shipment",shipmentSchema);
+export default Shipment;
