@@ -4,6 +4,8 @@ import img from '../../assets/DISCOVER1.png';
 import img2 from '../../assets/Discover2.png';
 import img3 from '../../assets/Discover3.png';
 import img4 from '../../assets/Discover4.png';
+import img5 from '../../assets/beverages.png';
+import img6 from '../../assets/groceries.png';
 
 export const ThirdSection = () => {
     return (
@@ -24,6 +26,10 @@ export const ThirdSection = () => {
             <div className='flex flex-row justify-center'>
                 <DiscoverCard title="Premium Meat & Seafood" description="Bring home the goodness of nature with our handpicked, vibrant, and nutritious vegetables." imgUrl={img4} />
                 <DiscoverCard title="Pure Dairy Essentials" description="Bring home the goodness of nature with our handpicked, vibrant, and nutritious vegetables." imgUrl={img3} />
+            </div>
+            <div className='flex flex-row justify-center'>
+                <DiscoverCard title="Beverages & Drinks" description="Bring home the goodness of nature with our handpicked, vibrant, and nutritious vegetables." imgUrl={img5} />
+                <DiscoverCard title="Daily Groceries" description="Bring home the goodness of nature with our handpicked, vibrant, and nutritious vegetables." imgUrl={img6} />
             </div>
         </div>
     )
