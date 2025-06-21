@@ -24,7 +24,8 @@ export const riderSignup = async(req,res)=>{
             email,
             password:hashedPassword,
             contactNumber,
-            address
+            address,
+            role:"rider"
         });
         await newRider.save();
         return res.status(201).json({

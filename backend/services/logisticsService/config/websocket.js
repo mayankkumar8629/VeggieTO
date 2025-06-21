@@ -5,7 +5,8 @@ dotenv.config({path:"../../../.env"});
 
 export const activeConnections = {
     riders: new Map(),
-    customers: new Map()
+    customers: new Map(),
+    deliveryPartners: new Map()
 }
 
 export function initSocket(server){
@@ -54,18 +55,29 @@ export function initSocket(server){
         else if(role==="customer"){
             activeConnections.customers.set(id,socket);
             console.log('Customer connected:',id);
+        }else if(role ==="delivery-partner"){
+            activeConnections.deliveryPartners.set(id,{
+                socket,
+                isAvailable:true
+            });
+            console.log("Delivery Partner connected:",id);
         }
 
-        //handling rider availability
-        if(role === 'rider'){
+        //handling avalablity of riders and delivery partners
+        if(role === "rider" || role === "delivery-partner"){
             socket.on('set_availability',(available)=>{
-                const rider = activeConnections.riders.get(id);
-                if(rider){
-                    rider.isAvailable = available;
-                    console.log(`Rider ${id} is now ${available ? 'available' : 'not available'}`);
+                
+                const connectionMap = role==='rider'
+                ?activeConnections.riders
+                :activeConnections.deliveryPartners;
+
+                const user= connectionMap.get(id);
+                if(user){
+                    user.isAvailable=available;
                 }
-            });   
+            });
         }
+       
         //handling disconnection
         socket.on('disconnect',()=>{
            if(role==="rider"){
@@ -74,12 +86,15 @@ export function initSocket(server){
            }else if(role ==="customer"){
                 activeConnections.customers.delete(id);
                 console.log("Customer disconnected:",id);
+           }else if(role === "delivery-partner"){
+                activeConnections.deliveryPartners.delete(id);
+                console.log("Delivery Partner :",id);
            }
         });
 
     });
 }
-//function to notify the custome
+//function to notify the customer
 export function notifyCustomer (customerId,event,data){
     const customerSocket = activeConnections.customers.get(customerId);
     if(customerSocket){
@@ -108,4 +123,17 @@ export function notifyAvailableRiders(event,data){
     });
     console.log(`Available riders notified :${count}`);
     return count;
+}
+
+//functin to notify all the delivery partners
+export function notifyAvailableDeliveryPartners(event,data){
+    let notifiedCount=0;
+    activeConnections.deliveryPartners.forEach((partner)=>{
+        if(partner.isAvailable){
+            partner.socket.emit(event,data);
+            notifiedCount++
+        }
+    });
+    console.log(`Notified Count is: ${notifiedCount}`);
+    return notifiedCount;
 }
