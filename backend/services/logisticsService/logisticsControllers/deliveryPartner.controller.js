@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config({path:"../../../.env"});
 import jwt from "jsonwebtoken";
 import Shipment from "../../../farmerModel/shipment.model.js";
+import { notifyFarmers } from "../config/websocket.js";
 
 //delivery partner signup
 export const  signup = async(req,res)=>{
@@ -81,7 +82,8 @@ export const login = async(req,res)=>{
 
 //delivery partner accept shipment
 export const acceptShipment = async(req,res)=>{
-    const {shipmentId}= req.body;
+    try{
+        const {shipmentId}= req.body;
     const deliveryPartnerId=req.user.id;
     
     const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId);
@@ -108,9 +110,26 @@ export const acceptShipment = async(req,res)=>{
     if(!updatedShipment){
         return res.status(500).json({message:"Failed to update shipment status"});
     }
-    
-    return res.status(200).j
+    const payload  = {
+        shipmentId,
+        message:"Shipment accepted successfully",
+        deliveryPartnerDetail:{
+            name:deliveryPartner.name,
+            contactNumber:deliveryPartner.contactNumber,
+            vehicleType:deliveryPartner.vehicleType,
+            vehicleNumber:deliveryPartner.vehicleNumber
+        }
+    }
+    notifyFarmers(shipment.farmer._id,'shipment_accepted',payload);
 
+
+
+    return res.status(200).json({message:"Shipment accepted successfully",shipment:updatedShipment});
+
+    }catch(error){
+        console.error("Error in acceptShipment:",error);
+        return res.status(500).json({message:"Internal server error", error:error.message});
+    }
 
 
 }

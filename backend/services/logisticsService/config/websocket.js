@@ -7,7 +7,7 @@ export const activeConnections = {
     riders: new Map(),
     customers: new Map(),
     deliveryPartners: new Map(),
-    vendors: new Map()
+    farmers: new Map()
 }
 
 export function initSocket(server){
@@ -62,6 +62,9 @@ export function initSocket(server){
                 isAvailable:true
             });
             console.log("Delivery Partner connected:",id);
+        }else if(role==="farmer"){
+            activeConnections.farmers.set(id,socket);
+            console.log("Farmer connected:",id);
         }
 
         //handling avalablity of riders and delivery partners
@@ -106,23 +109,31 @@ export function notifyCustomer (customerId,event,data){
         }
     }
 }
-
+//function to notify all the farmers
+export function notifyFarmers(farmerId,event,data){
+    const farmerSocket=activeConnections.farmers.get(farmerId);
+    if(farmerSocket){
+        try{
+            farmerSocket.emit(event,data);
+        }catch(error){
+            console.error("Error notifying farmer",error);
+        }
+    }
+}
 //function to notify all the ridrs
 export function notifyAvailableRiders(event,data){
     let count=0;
 
-    activeRiders.forEach((rider)=>{
+    activeConnections.riders.forEach((rider)=>{
         if(rider.isAvailable){
             try{
-                activeConnections.riders.socket.emit(event,data);
+                rider.socket.emit(event,data)
                 count++;
             }catch(error){
                 console.error("Error notifying rider",error);
-
             }
         }
-    });
-    console.log(`Available riders notified :${count}`);
+    })
     return count;
 }
 
@@ -138,4 +149,4 @@ export function notifyAvailableDeliveryPartners(event,data){
     console.log(`Notified Count is: ${notifiedCount}`);
     return notifiedCount;
 }
-//function to notify the vendor
+
