@@ -8,6 +8,7 @@ import { activeConnections } from "./config/websocket.js";
 
 import authRoute from "./logisticsRoutes/authRoute.js";
 import riderRoute from "./logisticsRoutes/riderRoute.js";
+import deliveryPartnerRoute from "./logisticsRoutes/deliveryPartnerRoute.js";
 
 dotenv.config({path:"../../.env"});
 import connectDB from "../../config/db.js";
@@ -46,6 +47,7 @@ app.get("/active",(req,res)=>{
 })
 app.use("/logistics",authRoute);
 app.use("/api/rider",riderRoute);
+app.use("/api/delivery-partner",deliveryPartnerRoute);
 
 server.listen(PORT,()=>{
     console.log(`LOGISTIC SERVICE IS RUNNING ON PORT ${PORT} HTTP + WEBSOCKET`);
