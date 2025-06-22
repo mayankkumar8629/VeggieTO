@@ -1,4 +1,4 @@
-import { JsonWebTokenError } from "jsonwebtoken";
+
 import DeliveryPartner from "../../../adminModel/deliveryPartner.model.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -6,7 +6,9 @@ dotenv.config({path:"../../../.env"});
 import jwt from "jsonwebtoken";
 import Shipment from "../../../farmerModel/shipment.model.js";
 import { notifyFarmers } from "../config/websocket.js";
-
+import {runTransaction} from "../../../config/db.js";
+import Item from "../../../UserModel/items.model.js";
+import FarmerTransaction from "../../../farmerModel/transactionFarmer.model.js";
 //delivery partner signup
 export const  signup = async(req,res)=>{
     try{
@@ -133,3 +135,142 @@ export const acceptShipment = async(req,res)=>{
 
 
 }
+//delivery partner on the way 
+export const shipmentOnTheWay = async(req,res)=>{
+    try{
+        const {shipmentId}=req.body;
+        const deliveryPartnerId=req.user.id;
+        const shipment = await Shipment.findById(shipmentId);
+        if(!shipment){
+            return res.status(404).json({message:"Shipment not found"});
+        }
+        const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId);
+        if(!deliveryPartner){
+            return res.status(404).json({message:"Delivery partner not found"});
+        }   
+        if(shipment.status!=='confirmed'){
+            return res.status(400).json({message:"Shipment is not confirmed yet"});
+        }
+        const updatedShipment = await Shipment.findByIdAndUpdate(
+            shipmentId,
+            {
+                status:"in-transit"
+            },
+            {
+                new:true
+            }
+        );
+        const payload  = {
+        shipmentId,
+        message:"Shipment on the way , will be delivered soon",
+        deliveryPartnerDetail:{
+            name:deliveryPartner.name,
+            contactNumber:deliveryPartner.contactNumber,
+            vehicleType:deliveryPartner.vehicleType,
+            vehicleNumber:deliveryPartner.vehicleNumber
+        }
+    }
+        notifyFarmers(shipment.farmer._id,'shipment_in_transit',payload);
+        return res.status(200).json({message:"Shipment on the way",shipment:updatedShipment});
+    }catch(error){
+        console.error("Errro in shipmentOnTheWay: ",error);
+        return res.status(500).json({message:"Internal server error",error:error.message});
+    }
+}
+//order delivered
+export const orderDelivered = async(req,res)=>{
+    try{
+        const result = await runTransaction(async(session) => {
+            const {shipmentId}=req.body;
+            const deliveryPartnerId=req.user.id;
+            const shipment = await Shipment.findById(shipmentId);
+            if(!shipment){
+                return res.status(404).json({message:"Shipment not found"});
+            }
+            const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId);
+            if(!deliveryPartner){
+                return res.status(404).json({message:"Delivery partaner not found"});
+            }
+            //checking the shipment status
+            if(shipment.status !== 'in-transit'){
+                return res.status(400).json({message:"Shipment is not in transit"});
+            }
+            //processing  each items in the listing
+            const {items}=shipment.listing;
+            for(const item of items){
+
+                const existingItem = await Item.findOne({
+                    name: { $regex: new RegExp(`^${item.itemName}$`,'i')}
+                }).session(session);
+
+                if(existingItem){
+                    await Item.updateOne(
+                        {_id:existingItem._id},
+                        {$inc: {stock:item.quantityValue}},
+                        {session}
+                    );
+                }else{
+                    await Item.create([{
+                        name:item.itemName,
+                        stock:item.quantityValue,
+                        category:item.category,
+                        price:item.price,
+                        isAvailable:true
+                    }],{session});
+                }
+            }
+            //updating the status of the shipment status
+            const updatedShipment = await Shipment.findByIdAndUpdate(
+                shipmentId,
+                {
+                    status:"delivered"
+                },
+                {
+                    new:true,
+                    session
+                }
+            );
+            const totalPrice=caluculateTotalPrice(items);
+            //creating transaction for the farmer
+            const transaction = new FarmerTransaction({
+                user:updatedShipment.farmer,
+                listing:updatedShipment.listing,
+                amount:totalPrice,
+                status:"successfull"
+            });
+            await transaction.save({session});
+
+            return {
+                shipment:updatedShipment,
+                transaction,
+                farmerId:shipment.farmer._id,
+                deliveryPartner
+            };
+
+        });
+        const payload = {
+            shipmentId:result.shipment._id,
+            message:"Shipment delivered successfully",
+            transactionId:result.transaction._id
+        };
+        notifyFarmers(result.farmerId,'shipment_delivered',payload);
+        
+        return res.status(200).json({
+            message:"Shipment delivered successfully",
+            shipment:result.shipment
+        });
+
+    }catch(error){
+        console.error("Error in orderDelivered:", error);
+        return res.status(500).json({message:"Internal server error", error:error.message});
+    }
+}
+
+const caluculateTotalPrice = (items) =>{
+    return items.reduce((total,item)=>{
+        const quantity=item.quantityValue;
+        const price=item.price;
+        return total + (quantity*price);
+    },0)
+}
+
