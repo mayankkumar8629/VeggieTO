@@ -6,6 +6,7 @@ import authRoutes from "./customerRoutes/authRoute.js";
 import itemsRoutes from "./customerRoutes/itemsRoute.js";
 import cartRoutes from "./customerRoutes/cartRoutes.js";
 import orderRoutes from "./customerRoutes/orderRoute.js";
+import profileRoutes from "./customerRoutes/profileRoute.js";
 
 
 dotenv.config({path:"../../.env"});
@@ -39,6 +40,7 @@ app.use("/customer",authRoutes);
 app.use("/api/items",itemsRoutes);
 app.use("/api/cart",cartRoutes)
 app.use("/api/order",orderRoutes);
+app.use("/api/profile",profileRoutes);
 
 app.listen(PORT,()=>{
     console.log(`CUSTOMER SERIVCE IS RUNNING ON PORT ${PORT}`);
