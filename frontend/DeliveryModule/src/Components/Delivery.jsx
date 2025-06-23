@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Package, Truck, User, Mail, Phone, Lock, Sparkles } from 'lucide-react';
 import axios from 'axios';
+import Socket from './utils/Socket';
 
 const Delivery = () => {
   const [authTab, setAuthTab] = useState('login');
@@ -25,11 +26,24 @@ const Delivery = () => {
   const handleLogin = async(e) => {
      e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/api/rider/riderLogin", {
+      const res = await axios.post("http://localhost:3000/api/logistics/rider/riderLogin", {
         email: formData.email,
         password: formData.password,
       });
       sessionStorage.setItem("token", res.data.token);
+      const token = res.data.token;
+    console.log("Login response:", res.data);
+      Socket.auth = { token };
+    Socket.connect();
+
+    Socket.on("connect", () => {
+      console.log("Socket connected with id:", Socket.id);
+
+      Socket.emit("register", {
+        userId:"user1234",
+        role: userRole,
+      });
+    });
       console.log("Login successful", res.data);
     } catch (err) {
       console.error("Login failed", err);
