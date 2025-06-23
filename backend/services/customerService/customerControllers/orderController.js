@@ -10,9 +10,34 @@ import Razorpay from 'razorpay';
 dotenv.config({ path: '../../../.env' });
 import crypto from "crypto";
 import {publisher} from "../../../config/redisPubSub.js";
-
+import Transaction from "../../../UserModel/transaction.model.js";
 
 import mongoose from "mongoose";
+
+//get all order
+export const getAllOrders = async(req,res)=>{
+    try{
+        const customerId=req.user.id;
+        const customer = await Customer.findById(customerId);
+        if(!customer){
+            return res.status(404).json({message:"Customer not found"});
+        }
+        const orders = await Order.find({user:customerId});
+        if(orders===undefined){
+            return res.status(404).json({message:"No orders found"});
+        }
+        if(orders.length === 0){
+            return res.status(200).json({message:"Your have zero orders"});
+        }
+        return res.status(200).json({
+            message:"Order retrieved successfully",
+            orders
+        })
+    }catch(error){
+        console.error("Error in getAllOrders:",error);
+        return res.status(500).json({message:"Internal server error",error});
+    }
+}
 
 export const placeOrder = async(req,res)=>{
     try{
@@ -143,6 +168,15 @@ export const verifyPayment = async (req,res)=>{
                 message:"Order not found"
             })
         }
+        //creating a transaction document after successful payment
+        const newTransaction = new Transaction({
+            user:updatedOrder.user._id,
+            order:updatedOrder._id,
+            amount:updatedOrder.totalPrice,
+            status:"success"
+        })
+        await newTransaction.save();
+
         //publishing the event 
         const eventPayLoad = {
             eventId : 'evt_${Date.now()}_${razorpay_order_id}',
