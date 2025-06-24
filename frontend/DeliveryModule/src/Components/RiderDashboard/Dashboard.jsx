@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapPin, Clock, DollarSign, Package, CheckCircle, User, Phone } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [deliveries, setDeliveries] = useState([
@@ -88,7 +89,15 @@ const Dashboard = () => {
       items: ["1x Cucumber", "2x Zucchini", "1x Herb Mix"],
       orderValue: "$26.75"
     }
-  ])
+  ]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const acceptDelivery = (deliveryId) => {
     setDeliveries(deliveries.filter(delivery => delivery.id !== deliveryId))

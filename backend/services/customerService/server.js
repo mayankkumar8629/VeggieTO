@@ -9,7 +9,7 @@ import orderRoutes from "./customerRoutes/orderRoute.js";
 import profileRoutes from "./customerRoutes/profileRoute.js";
 
 
-dotenv.config({path:"../../.env"});
+dotenv.config({ path: "../../.env" });
 import connectDB from "../../config/db.js";
 
 connectDB();
@@ -18,30 +18,31 @@ redis.client.ping()
   .catch(err => console.error('❌ Redis connection failed:', err));
 
 
- 
-const app=express();
+
+const app = express();
 const PORT = 5001;
 app.use(
-    cors({
-      origin: [
-        "http://localhost:5173"
-      ],
-      credentials: true,
-      methods: ["GET", "POST","PATCH", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-    })
+  cors({
+    origin: [
+      "http://localhost:5174",
+      "http://localhost:5173"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use("/customer",authRoutes);
-app.use("/api/items",itemsRoutes);
-app.use("/api/cart",cartRoutes)
-app.use("/api/order",orderRoutes);
-app.use("/api/profile",profileRoutes);
+app.use("/customer", authRoutes);
+app.use("/api/items", itemsRoutes);
+app.use("/api/cart", cartRoutes)
+app.use("/api/order", orderRoutes);
+app.use("/api/profile", profileRoutes);
 
-app.listen(PORT,()=>{
-    console.log(`CUSTOMER SERIVCE IS RUNNING ON PORT ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`CUSTOMER SERIVCE IS RUNNING ON PORT ${PORT}`);
 })

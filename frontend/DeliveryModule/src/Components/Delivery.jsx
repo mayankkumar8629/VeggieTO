@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Eye, EyeOff, Package, Truck, User, Mail, Phone, Lock, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import Socket from './utils/Socket';
+import { nav } from 'framer-motion/client';
+import { useNavigate } from 'react-router-dom';
 
 const Delivery = () => {
   const [authTab, setAuthTab] = useState('login');
@@ -13,6 +15,7 @@ const Delivery = () => {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,21 +33,17 @@ const Delivery = () => {
         email: formData.email,
         password: formData.password,
       });
-      sessionStorage.setItem("token", res.data.token);
+      await sessionStorage.setItem('token', res.data.token);
+      console.log("Token stored in sessionStorage:", res.data.token);
       const token = res.data.token;
-    console.log("Login response:", res.data);
       Socket.auth = { token };
-    Socket.connect();
+      Socket.connect();
 
-    Socket.on("connect", () => {
+     Socket.on("connect", () => {
       console.log("Socket connected with id:", Socket.id);
-
-      Socket.emit("register", {
-        userId:"user1234",
-        role: userRole,
-      });
     });
       console.log("Login successful", res.data);
+      navigate('/dashboard', { state: { loginData: res.data } });
     } catch (err) {
       console.error("Login failed", err);
     }
