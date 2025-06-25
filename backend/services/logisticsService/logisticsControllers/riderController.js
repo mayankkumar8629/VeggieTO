@@ -82,7 +82,6 @@ export const getPendingDeliveries = async(req,res)=>{
             return res.status(404).json({message:"Rider not found"});
         }
         const deliveries = await Delivery.find({
-            rider:riderId,
             status:"pending"
         });
         if(deliveries === undefined || deliveries.length === 0){

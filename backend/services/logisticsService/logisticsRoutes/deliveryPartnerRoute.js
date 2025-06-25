@@ -6,6 +6,7 @@ const router=express.Router();
 
 router.post("/signup",signup);
 router.post("/login",login);
+router.get
 router.post("accept-shipment",authenticateToken,acceptShipment);
 router.post("/shipment-on-the-way",authenticateToken,shipmentOnTheWay);
 router.post("/order-delivered",authenticateToken,orderDelivered);
