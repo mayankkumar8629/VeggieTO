@@ -73,7 +73,31 @@ export const riderLogin = async(req,res)=>{
         return res.status(500).json({message:"Internal server error"});
     }
 }
+//getting all the pending deliveries for the rider
+export const getPendingDeliveries = async(req,res)=>{
+    try{
+        const riderId=req.user.id;
+        const rider=await Rider.findById(riderId);
+        if(!rider){
+            return res.status(404).json({message:"Rider not found"});
+        }
+        const deliveries = await Delivery.find({
+            rider:riderId,
+            status:"pending"
+        });
+        if(deliveries === undefined || deliveries.length === 0){
+            return res.status(404).json({message:"No pending deliveries found"});
+        }
+        return res.status(200).json({
+            message:"Pending deliveries fetched successfully",
+            deliveries
+        });
 
+    }catch(error){
+        console.error("Error in getPendingDeliveries:", error);
+        return res.status(500).json({message:"Internal server error"});
+    }
+}
 //getting all the ongoing deliveries for the rider
 export const getOngoingDeliveries = async(req,res)=>{
     try{

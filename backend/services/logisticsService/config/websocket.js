@@ -74,6 +74,8 @@ export function initSocket(server) {
                 const connectionMap = role === 'rider'
                     ? activeConnections.riders
                     : activeConnections.deliveryPartners;
+                
+                console.log(activeConnections.riders.get(id));    
 
                 const user = connectionMap.get(id);
                 if (user) {
