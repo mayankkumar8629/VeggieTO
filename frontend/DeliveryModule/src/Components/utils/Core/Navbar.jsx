@@ -2,37 +2,108 @@ import React, { useEffect, useState } from "react";
 import { Bell, User, LogOut, Settings, BadgeCheck, Power } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Socket from "../Socket";
+import Dashboard from "../../RiderDashboard/Dashboard";
+import OfflineNotice from "../OfflineNotice";
 
 export const Navbar = () => {
   // Mock data for demonstration - replace with your actual navigation logic
   const loginData = { name: "John Rider", email: "john.rider@veggieto.com" };
   const [activeTab, setActiveTab] = useState("available");
   const [isOnline, setIsOnline] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
   const navigate = useNavigate();
 
+  // Check authentication first
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) {
       navigate("/");
+      return;
     }
+    setIsAuthenticated(true);
   }, [navigate]);
-  
+
+  // Socket connection and event handling
   useEffect(() => {
-    Socket.on('new_delivery', (data) => {
+    if (!isAuthenticated) return;
+
+    // Connect socket if not already connected
+    if (!Socket.connected) {
+      console.log('Connecting socket...');
+      Socket.connect();
+    }
+
+    // Socket event handlers
+    const handleConnect = () => {
+      console.log('Socket connected successfully');
+      setSocketConnected(true);
+    };
+
+    const handleDisconnect = (reason) => {
+      console.log('Socket disconnected:', reason);
+      setSocketConnected(false);
+    };
+
+    const handleConnectError = (error) => {
+      console.log('Socket connection error:', error.message);
+      setSocketConnected(false);
+    };
+
+    const handleNewDelivery = (data) => {
       console.log('📦 New delivery received:', data);
       // Handle the delivery data here
-    });
-    return () => {
-      Socket.off('new_delivery');
     };
-  }, []);
 
+    // Add event listeners
+    Socket.on('connect', handleConnect);
+    Socket.on('disconnect', handleDisconnect);
+    Socket.on('connect_error', handleConnectError);
+    Socket.on('new_delivery', handleNewDelivery);
+
+    // Check if already connected
+    if (Socket.connected) {
+      setSocketConnected(true);
+    }
+
+    // Cleanup function
+    return () => {
+      Socket.off('connect', handleConnect);
+      Socket.off('disconnect', handleDisconnect);
+      Socket.off('connect_error', handleConnectError);
+      Socket.off('new_delivery', handleNewDelivery);
+    };
+  }, [isAuthenticated]);
+
+  // Handle page visibility changes to reconnect socket
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !Socket.connected) {
+        console.log('Page became visible, reconnecting socket...');
+        Socket.connect();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     console.log("Logging out...");
+    setIsAuthenticated(false);
+    setSocketConnected(false);
     sessionStorage.removeItem("token");
+    
+    // Disconnect socket before navigation
+    if (Socket.connected) {
+      Socket.disconnect();
+    }
     navigate("/");
-    Socket.disconnect();
   };
 
   const handleTabClick = (tab) => {
@@ -41,9 +112,20 @@ export const Navbar = () => {
 
   const toggleOnlineStatus = () => {
     setIsOnline(!isOnline);
+    
+    // Emit online status to server if socket is connected
+    if (Socket.connected) {
+      Socket.emit('rider_status_change', { isOnline: !isOnline });
+    }
   };
 
+  // Don't render the navbar if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
+    <>
     <nav className="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 shadow-xl sticky top-0 z-50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-18">
@@ -58,6 +140,13 @@ export const Navbar = () => {
                   VeggieTO{" "}
                   <span className="text-yellow-200 font-bold">Rider</span>
                 </h1>
+                {/* Socket connection indicator */}
+                <div className="flex items-center gap-1 mt-1">
+                  <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-green-300' : 'bg-red-400'}`}></div>
+                  <span className="text-xs text-white/70">
+                    {socketConnected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -108,11 +197,12 @@ export const Navbar = () => {
               </span>
               <button
                 onClick={toggleOnlineStatus}
+                disabled={!socketConnected}
                 className={`relative inline-flex h-8 w-14 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 ${
                   isOnline
                     ? "bg-green-400 shadow-lg shadow-green-400/30"
                     : "bg-gray-400"
-                }`}
+                } ${!socketConnected ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <span
                   className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform duration-300 shadow-lg ${
@@ -266,5 +356,7 @@ export const Navbar = () => {
         </div>
       </div>
     </nav>
+    {isOnline ? <Dashboard activeTab={activeTab} /> : <OfflineNotice />}
+    </>
   );
 };

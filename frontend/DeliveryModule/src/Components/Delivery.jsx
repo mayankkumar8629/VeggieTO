@@ -33,7 +33,7 @@ const Delivery = () => {
         email: formData.email,
         password: formData.password,
       });
-      await sessionStorage.setItem('token', res.data.token);
+      sessionStorage.setItem('token', res.data.token);
       console.log("Token stored in sessionStorage:", res.data.token);
       const token = res.data.token;
       Socket.auth = { token };

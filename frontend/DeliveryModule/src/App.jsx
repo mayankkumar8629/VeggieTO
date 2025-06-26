@@ -13,7 +13,6 @@ const App = () => {
           <Route path="/dashboard" element={
             <div className="flex flex-col h-screen">
               <Navbar />
-              <Dashboard />
             </div>
           } />
         </Routes>

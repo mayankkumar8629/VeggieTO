@@ -1,0 +1,232 @@
+Date : 2025-06-24 13:54:25
+Directory : c:\Users\adity\OneDrive\Desktop\VeggieTO
+Total : 133 files,  27613 codes, 199 comments, 698 blanks, all 28510 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JSON           |         18 |     21,807 |          0 |         18 |     21,825 |
+| JavaScript     |         63 |      2,859 |        110 |        346 |      3,315 |
+| JavaScript JSX |         33 |      2,672 |         89 |        269 |      3,030 |
+| PostCSS        |          6 |        127 |          0 |         19 |        146 |
+| Markdown       |          4 |         65 |          0 |         39 |        104 |
+| XML            |          6 |         42 |          0 |          1 |         43 |
+| HTML           |          3 |         41 |          0 |          6 |         47 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                          | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                             |        133 |     27,613 |        199 |        698 |     28,510 |
+| . (Files)                                                                                                                     |          3 |        404 |          0 |         23 |        427 |
+| backend                                                                                                                       |         66 |     13,764 |        106 |        343 |     14,213 |
+| backend (Files)                                                                                                               |          2 |        363 |          0 |          2 |        365 |
+| backend\UserModel                                                                                                             |          6 |        258 |          0 |         14 |        272 |
+| backend\adminModel                                                                                                            |          3 |        139 |          0 |          8 |        147 |
+| backend\api-gateway                                                                                                           |          7 |      2,547 |          3 |         37 |      2,587 |
+| backend\api-gateway (Files)                                                                                                   |          3 |      2,397 |          1 |         16 |      2,414 |
+| backend\api-gateway\controllers                                                                                               |          2 |        137 |          2 |         14 |        153 |
+| backend\api-gateway\routes                                                                                                    |          2 |         13 |          0 |          7 |         20 |
+| backend\config                                                                                                                |          2 |         65 |         23 |         20 |        108 |
+| backend\farmerModel                                                                                                           |          4 |        195 |          0 |          7 |        202 |
+| backend\services                                                                                                              |         42 |     10,197 |         80 |        255 |     10,532 |
+| backend\services\customerService                                                                                              |         18 |      4,951 |         36 |        137 |      5,124 |
+| backend\services\customerService (Files)                                                                                      |          3 |      4,193 |          0 |         12 |      4,205 |
+| backend\services\customerService\config                                                                                       |          1 |          8 |          0 |          2 |         10 |
+| backend\services\customerService\customerControllers                                                                          |          5 |        598 |         30 |         76 |        704 |
+| backend\services\customerService\customerRoutes                                                                               |          5 |         38 |          0 |         17 |         55 |
+| backend\services\customerService\middleware                                                                                   |          1 |         19 |          3 |          4 |         26 |
+| backend\services\customerService\utils                                                                                        |          3 |         95 |          3 |         26 |        124 |
+| backend\services\farmerService                                                                                                |         10 |      2,127 |          6 |         30 |      2,163 |
+| backend\services\farmerService (Files)                                                                                        |          3 |      1,939 |          0 |         10 |      1,949 |
+| backend\services\farmerService\farmerControllers                                                                              |          3 |        150 |          3 |          6 |        159 |
+| backend\services\farmerService\farmerRoutes                                                                                   |          3 |         19 |          0 |         10 |         29 |
+| backend\services\farmerService\middlewares                                                                                    |          1 |         19 |          3 |          4 |         26 |
+| backend\services\logisticsService                                                                                             |         14 |      3,119 |         38 |         88 |      3,245 |
+| backend\services\logisticsService (Files)                                                                                     |          3 |      2,299 |          0 |         12 |      2,311 |
+| backend\services\logisticsService\config                                                                                      |          1 |        129 |         10 |         14 |        153 |
+| backend\services\logisticsService\logisticsControllers                                                                        |          5 |        638 |         28 |         49 |        715 |
+| backend\services\logisticsService\logisticsRoutes                                                                             |          4 |         33 |          0 |         12 |         45 |
+| backend\services\logisticsService\middlewares                                                                                 |          1 |         20 |          0 |          1 |         21 |
+| frontend                                                                                                                      |         64 |     13,445 |         93 |        332 |     13,870 |
+| frontend\CustomerModule                                                                                                       |         36 |      5,631 |         55 |        221 |      5,907 |
+| frontend\CustomerModule (Files)                                                                                               |          7 |      3,751 |          2 |         15 |      3,768 |
+| frontend\CustomerModule\public                                                                                                |          1 |          1 |          0 |          0 |          1 |
+| frontend\CustomerModule\src                                                                                                   |         28 |      1,879 |         53 |        206 |      2,138 |
+| frontend\CustomerModule\src (Files)                                                                                           |          4 |        104 |          0 |          9 |        113 |
+| frontend\CustomerModule\src\assets                                                                                            |          1 |         37 |          0 |          1 |         38 |
+| frontend\CustomerModule\src\components                                                                                        |         23 |      1,738 |         53 |        196 |      1,987 |
+| frontend\CustomerModule\src\components\Carts                                                                                  |          2 |        244 |          7 |         22 |        273 |
+| frontend\CustomerModule\src\components\Carts (Files)                                                                          |          1 |        210 |          2 |         16 |        228 |
+| frontend\CustomerModule\src\components\Carts\utils                                                                            |          1 |         34 |          5 |          6 |         45 |
+| frontend\CustomerModule\src\components\Homepage                                                                               |         13 |        570 |         17 |         68 |        655 |
+| frontend\CustomerModule\src\components\Homepage (Files)                                                                       |          7 |        368 |          6 |         37 |        411 |
+| frontend\CustomerModule\src\components\Homepage\Utilities                                                                     |          6 |        202 |         11 |         31 |        244 |
+| frontend\CustomerModule\src\components\OrderSummary                                                                           |          1 |         72 |          0 |         10 |         82 |
+| frontend\CustomerModule\src\components\Partials                                                                               |          4 |        492 |         17 |         46 |        555 |
+| frontend\CustomerModule\src\components\Partials (Files)                                                                       |          2 |        353 |         15 |         30 |        398 |
+| frontend\CustomerModule\src\components\Partials\utils                                                                         |          2 |        139 |          2 |         16 |        157 |
+| frontend\CustomerModule\src\components\ProductPage                                                                            |          3 |        360 |         12 |         50 |        422 |
+| frontend\CustomerModule\src\components\ProductPage (Files)                                                                    |          1 |        158 |          4 |         28 |        190 |
+| frontend\CustomerModule\src\components\ProductPage\utils                                                                      |          2 |        202 |          8 |         22 |        232 |
+| frontend\DeliveryModule                                                                                                       |         16 |      4,843 |         37 |         78 |      4,958 |
+| frontend\DeliveryModule (Files)                                                                                               |          6 |      4,023 |          1 |         15 |      4,039 |
+| frontend\DeliveryModule\public                                                                                                |          1 |          1 |          0 |          0 |          1 |
+| frontend\DeliveryModule\src                                                                                                   |          9 |        819 |         36 |         63 |        918 |
+| frontend\DeliveryModule\src (Files)                                                                                           |          4 |         36 |          0 |          7 |         43 |
+| frontend\DeliveryModule\src\Components                                                                                        |          4 |        782 |         36 |         56 |        874 |
+| frontend\DeliveryModule\src\Components (Files)                                                                                |          1 |        319 |         13 |         26 |        358 |
+| frontend\DeliveryModule\src\Components\RiderDashboard                                                                         |          1 |        214 |         10 |         11 |        235 |
+| frontend\DeliveryModule\src\Components\utils                                                                                  |          2 |        249 |         13 |         19 |        281 |
+| frontend\DeliveryModule\src\Components\utils (Files)                                                                          |          1 |          6 |          1 |          3 |         10 |
+| frontend\DeliveryModule\src\Components\utils\Core                                                                             |          1 |        243 |         12 |         16 |        271 |
+| frontend\DeliveryModule\src\assets                                                                                            |          1 |          1 |          0 |          0 |          1 |
+| frontend\FarmerModule                                                                                                         |         12 |      2,971 |          1 |         33 |      3,005 |
+| frontend\FarmerModule (Files)                                                                                                 |          6 |      2,830 |          1 |         13 |      2,844 |
+| frontend\FarmerModule\public                                                                                                  |          1 |          1 |          0 |          0 |          1 |
+| frontend\FarmerModule\src                                                                                                     |          5 |        140 |          0 |         20 |        160 |
+| frontend\FarmerModule\src (Files)                                                                                             |          4 |        139 |          0 |         20 |        159 |
+| frontend\FarmerModule\src\assets                                                                                              |          1 |          1 |          0 |          0 |          1 |
++-------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                                      | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\README.md                                                                            | Markdown       |         44 |          0 |         21 |         65 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\cart.model.js                                                      | JavaScript     |         30 |          0 |          2 |         32 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\customer.model.js                                                  | JavaScript     |         68 |          0 |          4 |         72 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\delivery.model.js                                                  | JavaScript     |         41 |          0 |          2 |         43 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\items.model.js                                                     | JavaScript     |         51 |          0 |          3 |         54 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\order.model.js                                                     | JavaScript     |         44 |          0 |          2 |         46 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\UserModel\transaction.model.js                                               | JavaScript     |         24 |          0 |          1 |         25 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\adminModel\admin.model.js                                                    | JavaScript     |         44 |          0 |          1 |         45 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\adminModel\deliveryPartner.model.js                                          | JavaScript     |         51 |          0 |          2 |         53 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\adminModel\rider.model.js                                                    | JavaScript     |         44 |          0 |          5 |         49 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\controllers\authController.js                                    | JavaScript     |         72 |          0 |          9 |         81 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\controllers\proxyController.js                                   | JavaScript     |         65 |          2 |          5 |         72 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\package-lock.json                                                | JSON           |      2,345 |          0 |          1 |      2,346 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\package.json                                                     | JSON           |         24 |          0 |          1 |         25 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\routes\authRoutes.js                                             | JavaScript     |          6 |          0 |          4 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\routes\proxyRoute.js                                             | JavaScript     |          7 |          0 |          3 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\api-gateway\server.js                                                        | JavaScript     |         28 |          1 |         14 |         43 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\config\db.js                                                                 | JavaScript     |         52 |         23 |         16 |         91 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\config\redisPubSub.js                                                        | JavaScript     |         13 |          0 |          4 |         17 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\farmerModel\farmer.model.js                                                  | JavaScript     |         69 |          0 |          2 |         71 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\farmerModel\productListing.model.js                                          | JavaScript     |         61 |          0 |          2 |         63 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\farmerModel\shipment.model.js                                                | JavaScript     |         41 |          0 |          2 |         43 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\farmerModel\transactionFarmer.model.js                                       | JavaScript     |         24 |          0 |          1 |         25 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\package-lock.json                                                            | JSON           |        345 |          0 |          1 |        346 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\package.json                                                                 | JSON           |         18 |          0 |          1 |         19 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\config\razorpay.config.js                           | JavaScript     |          8 |          0 |          2 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerControllers\authController.js               | JavaScript     |         42 |          0 |          2 |         44 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerControllers\cartController.js               | JavaScript     |        189 |         18 |         32 |        239 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerControllers\orderController.js              | JavaScript     |        174 |          7 |         22 |        203 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerControllers\productController.js            | JavaScript     |        132 |          3 |         18 |        153 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerControllers\profileController.js            | JavaScript     |         61 |          2 |          2 |         65 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerRoutes\authRoute.js                         | JavaScript     |          5 |          0 |          3 |          8 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerRoutes\cartRoutes.js                        | JavaScript     |         10 |          0 |          3 |         13 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerRoutes\itemsRoute.js                        | JavaScript     |          8 |          0 |          4 |         12 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerRoutes\orderRoute.js                        | JavaScript     |          8 |          0 |          4 |         12 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\customerRoutes\profileRoute.js                      | JavaScript     |          7 |          0 |          3 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\middleware\authMiddleware.js                        | JavaScript     |         19 |          3 |          4 |         26 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\package-lock.json                                   | JSON           |      4,128 |          0 |          1 |      4,129 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\package.json                                        | JSON           |         27 |          0 |          1 |         28 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\server.js                                           | JavaScript     |         38 |          0 |         10 |         48 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\utils\orderQueue.js                                 | JavaScript     |         27 |          0 |          8 |         35 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\utils\redis-bull.js                                 | JavaScript     |         15 |          2 |          7 |         24 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\customerService\utils\redis.js                                      | JavaScript     |         53 |          1 |         11 |         65 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerControllers\authController.js                   | JavaScript     |         36 |          0 |          2 |         38 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerControllers\listingController.js                | JavaScript     |         53 |          2 |          2 |         57 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerControllers\profileController.js                | JavaScript     |         61 |          1 |          2 |         64 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerRoutes\authRoute.js                             | JavaScript     |          5 |          0 |          3 |          8 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerRoutes\listingRoute.js                          | JavaScript     |          7 |          0 |          4 |         11 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\farmerRoutes\profileRoute.js                          | JavaScript     |          7 |          0 |          3 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\middlewares\authMiddleware.js                         | JavaScript     |         19 |          3 |          4 |         26 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\package-lock.json                                     | JSON           |      1,889 |          0 |          1 |      1,890 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\package.json                                          | JSON           |         21 |          0 |          1 |         22 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\farmerService\server.js                                             | JavaScript     |         29 |          0 |          8 |         37 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\config\websocket.js                                | JavaScript     |        129 |         10 |         14 |        153 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsControllers\authController.js             | JavaScript     |         38 |          0 |          1 |         39 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsControllers\deliveryController.js         | JavaScript     |         39 |          3 |          7 |         49 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsControllers\deliveryPartner.controller.js | JavaScript     |        250 |          9 |         18 |        277 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsControllers\listingControllers.js         | JavaScript     |         90 |          7 |         11 |        108 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsControllers\riderController.js            | JavaScript     |        221 |          9 |         12 |        242 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsRoutes\authRoute.js                       | JavaScript     |          5 |          0 |          3 |          8 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsRoutes\deliveryPartnerRoute.js            | JavaScript     |         10 |          0 |          3 |         13 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsRoutes\listingRoute.js                    | JavaScript     |          6 |          0 |          3 |          9 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\logisticsRoutes\riderRoute.js                      | JavaScript     |         12 |          0 |          3 |         15 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\middlewares\authMiddleware.js                      | JavaScript     |         20 |          0 |          1 |         21 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\package-lock.json                                  | JSON           |      2,232 |          0 |          1 |      2,233 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\package.json                                       | JSON           |         23 |          0 |          1 |         24 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\backend\services\logisticsService\server.js                                          | JavaScript     |         44 |          0 |         10 |         54 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\README.md                                                    | Markdown       |          7 |          0 |          6 |         13 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\eslint.config.js                                             | JavaScript     |         32 |          0 |          2 |         34 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\index.html                                                   | HTML           |         14 |          0 |          2 |         16 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\package-lock.json                                            | JSON           |      3,623 |          0 |          1 |      3,624 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\package.json                                                 | JSON           |         35 |          0 |          1 |         36 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\public\vite.svg                                              | XML            |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\App.css                                                  | PostCSS        |         24 |          0 |          4 |         28 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\App.jsx                                                  | JavaScript JSX |         70 |          0 |          3 |         73 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\assets\krishi.svg                                        | XML            |         37 |          0 |          1 |         38 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Carts\Cart.jsx                                | JavaScript JSX |        210 |          2 |         16 |        228 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Carts\utils\CartCard.jsx                      | JavaScript JSX |         34 |          5 |          6 |         45 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\FifthSection.jsx                     | JavaScript JSX |         50 |          0 |          5 |         55 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\FirstSection.jsx                     | JavaScript JSX |        118 |          0 |          6 |        124 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\FourthSection.jsx                    | JavaScript JSX |         65 |          1 |          8 |         74 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\PreSecondSection.jsx                 | JavaScript JSX |         37 |          1 |          7 |         45 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\SecondSection.jsx                    | JavaScript JSX |         34 |          2 |          4 |         40 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\SixthSection.jsx                     | JavaScript JSX |         29 |          2 |          4 |         35 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\ThirdSection.jsx                     | JavaScript JSX |         35 |          0 |          3 |         38 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\Card.jsx                   | JavaScript JSX |         14 |          4 |          6 |         24 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\Carousel.jsx               | JavaScript JSX |         46 |          0 |          8 |         54 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\DeliveryCard.jsx           | JavaScript JSX |         39 |          2 |          4 |         45 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\DiscoverCard.jsx           | JavaScript JSX |         44 |          2 |          5 |         51 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\Fresh.jsx                  | JavaScript JSX |         41 |          3 |          5 |         49 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Homepage\Utilities\TickCard.jsx               | JavaScript JSX |         18 |          0 |          3 |         21 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\OrderSummary\OrderSummary.jsx                 | JavaScript JSX |         72 |          0 |         10 |         82 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Partials\Footer.jsx                           | JavaScript JSX |         64 |          6 |          6 |         76 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Partials\Navbar.jsx                           | JavaScript JSX |        289 |          9 |         24 |        322 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Partials\utils\ProfileMenu.jsx                | JavaScript JSX |         72 |          2 |          7 |         81 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\Partials\utils\SearchBar.jsx                  | JavaScript JSX |         67 |          0 |          9 |         76 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\ProductPage\ProductArea.jsx                   | JavaScript JSX |        158 |          4 |         28 |        190 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\ProductPage\utils\ProductCard.jsx             | JavaScript JSX |        107 |          3 |          9 |        119 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\components\ProductPage\utils\Slider.jsx                  | JavaScript JSX |         95 |          5 |         13 |        113 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\index.css                                                | PostCSS        |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\src\main.jsx                                                 | JavaScript JSX |          9 |          0 |          2 |         11 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\tailwind.config.js                                           | JavaScript     |         31 |          1 |          1 |         33 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\CustomerModule\vite.config.js                                               | JavaScript     |          9 |          1 |          2 |         12 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\README.md                                                    | Markdown       |          7 |          0 |          6 |         13 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\eslint.config.js                                             | JavaScript     |         32 |          0 |          2 |         34 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\index.html                                                   | HTML           |         14 |          0 |          3 |         17 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\package-lock.json                                            | JSON           |      3,928 |          0 |          1 |      3,929 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\package.json                                                 | JSON           |         36 |          0 |          1 |         37 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\public\vite.svg                                              | XML            |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\App.css                                                  | PostCSS        |          2 |          0 |          0 |          2 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\App.jsx                                                  | JavaScript JSX |         23 |          0 |          4 |         27 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\Components\Delivery.jsx                                  | JavaScript JSX |        319 |         13 |         26 |        358 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\Components\RiderDashboard\Dashboard.jsx                  | JavaScript JSX |        214 |         10 |         11 |        235 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\Components\utils\Core\Navbar.jsx                         | JavaScript JSX |        243 |         12 |         16 |        271 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\Components\utils\Socket.jsx                              | JavaScript JSX |          6 |          1 |          3 |         10 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\assets\react.svg                                         | XML            |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\index.css                                                | PostCSS        |          2 |          0 |          1 |          3 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\src\main.jsx                                                 | JavaScript JSX |          9 |          0 |          2 |         11 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\DeliveryModule\vite.config.js                                               | JavaScript     |          6 |          1 |          2 |          9 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\README.md                                                      | Markdown       |          7 |          0 |          6 |         13 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\eslint.config.js                                               | JavaScript     |         32 |          0 |          2 |         34 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\index.html                                                     | HTML           |         13 |          0 |          1 |         14 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\package-lock.json                                              | JSON           |      2,746 |          0 |          1 |      2,747 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\package.json                                                   | JSON           |         27 |          0 |          1 |         28 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\public\vite.svg                                                | XML            |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\src\App.css                                                    | PostCSS        |         37 |          0 |          6 |         43 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\src\App.jsx                                                    | JavaScript JSX |         32 |          0 |          4 |         36 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\src\assets\react.svg                                           | XML            |          1 |          0 |          0 |          1 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\src\index.css                                                  | PostCSS        |         61 |          0 |          8 |         69 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\src\main.jsx                                                   | JavaScript JSX |          9 |          0 |          2 |         11 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\frontend\FarmerModule\vite.config.js                                                 | JavaScript     |          5 |          1 |          2 |          8 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\package-lock.json                                                                    | JSON           |        355 |          0 |          1 |        356 |
+| c:\Users\adity\OneDrive\Desktop\VeggieTO\package.json                                                                         | JSON           |          5 |          0 |          1 |          6 |
+| Total                                                                                                                         |                |     27,613 |        199 |        698 |     28,510 |
++-------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

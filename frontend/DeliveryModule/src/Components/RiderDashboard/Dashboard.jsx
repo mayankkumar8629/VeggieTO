@@ -1,235 +1,448 @@
-import React, { useEffect, useState } from 'react'
-import { MapPin, Clock, DollarSign, Package, CheckCircle, User, Phone } from 'lucide-react'
+// 📦 Dashboard.js (Optimized with Socket Integration - Simplified)
+import React, { useEffect, useState, useMemo } from 'react';
+import { MapPin, Clock, DollarSign, Package, CheckCircle, User, Phone, Truck, Star, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Socket from '../utils/Socket'; // Adjust path as needed
 
-const Dashboard = () => {
-  const [deliveries, setDeliveries] = useState([
-    {
-      id: 1,
-      customerName: "Sarah Johnson",
-      customerPhone: "+1 234-567-8901",
-      pickup: {
-        address: "Green Harvest Market, 123 Main St",
-        time: "12:30 PM"
-      },
-      delivery: {
-        address: "456 Oak Avenue, Apt 2B",
-        time: "1:15 PM"
-      },
-      distance: "2.5 km",
-      earnings: "$8.50",
-      items: ["2x Organic Tomatoes", "1x Fresh Lettuce", "3x Bell Peppers"],
-      orderValue: "$24.99"
-    },
-    {
-      id: 2,
-      customerName: "Mike Chen",
-      customerPhone: "+1 234-567-8902",
-      pickup: {
-        address: "Farm Fresh Store, 789 Green St",
-        time: "1:00 PM"
-      },
-      delivery: {
-        address: "321 Pine Road, Unit 5",
-        time: "1:45 PM"
-      },
-      distance: "3.2 km",
-      earnings: "$12.00",
-      items: ["1x Organic Carrots", "2x Broccoli", "1x Spinach Bundle"],
-      orderValue: "$31.50"
-    },
-    {
-      id: 3,
-      customerName: "Emma Williams",
-      customerPhone: "+1 234-567-8903",
-      pickup: {
-        address: "Veggie Paradise, 555 Garden Ave",
-        time: "1:30 PM"
-      },
-      delivery: {
-        address: "789 Maple Street, Floor 3",
-        time: "2:10 PM"
-      },
-      distance: "1.8 km",
-      earnings: "$6.75",
-      items: ["4x Apples", "2x Bananas", "1x Orange Juice"],
-      orderValue: "$18.25"
-    },
-    {
-      id: 4,
-      customerName: "David Brown",
-      customerPhone: "+1 234-567-8904",
-      pickup: {
-        address: "Organic Oasis, 222 Health Blvd",
-        time: "2:00 PM"
-      },
-      delivery: {
-        address: "147 Cedar Lane, House 12",
-        time: "2:40 PM"
-      },
-      distance: "4.1 km",
-      earnings: "$15.25",
-      items: ["1x Kale Bundle", "3x Avocados", "2x Sweet Potatoes"],
-      orderValue: "$42.80"
-    },
-    {
-      id: 5,
-      customerName: "Lisa Anderson",
-      customerPhone: "+1 234-567-8905",
-      pickup: {
-        address: "Fresh Fields Market, 888 Bloom St",
-        time: "2:15 PM"
-      },
-      delivery: {
-        address: "963 Birch Court, Apt 7A",
-        time: "2:55 PM"
-      },
-      distance: "2.9 km",
-      earnings: "$9.50",
-      items: ["1x Cucumber", "2x Zucchini", "1x Herb Mix"],
-      orderValue: "$26.75"
-    }
-  ]);
+const Dashboard = ({ activeTab }) => {
+  const [deliveries, setDeliveries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [processingDeliveries, setProcessingDeliveries] = useState(new Set());
   const navigate = useNavigate();
 
+  // Memoized API endpoint getter
+  const apiEndpoint = useMemo(() => {
+    const baseUrl = 'http://localhost:3000/api/logistics/rider';
+    switch (activeTab) {
+      case 'pending': return `${baseUrl}/pendingDeliveries`;
+      case 'ongoing': return `${baseUrl}/ongoingDeliveries`;
+      case 'completed': return `${baseUrl}/completedDeliveries`;
+      default: return `${baseUrl}/pendingDeliveries`;
+    }
+  }, [activeTab]);
+
+  // Check authentication
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
       navigate('/');
+      return;
     }
   }, [navigate]);
 
+  // Fetch deliveries function
+  const fetchDeliveries = async () => {
+    if (!apiEndpoint) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.get(apiEndpoint, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const fetchedDeliveries = response.data?.deliveries || [];
+      setDeliveries(fetchedDeliveries);
+    } catch (err) {
+      console.error('Fetch deliveries error:', err);
+      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch deliveries";
+      setError(errorMessage);
+      setDeliveries([]);
+      
+      // If auth error, redirect to login
+      if (err.response?.status === 401) {
+        sessionStorage.removeItem('token');
+        navigate('/');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Socket connection and event handlers
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (!token) return;
+
+    // Connect socket if not connected
+    if (!Socket.connected) {
+      Socket.connect();
+    }
+
+    // Handle new delivery
+    const handleNewDelivery = (newDelivery) => {
+      console.log('New delivery received:', newDelivery);
+      
+      // Only add to pending deliveries if we're on pending tab
+        setDeliveries(prev => {
+          // Check if delivery already exists to prevent duplicates
+          const exists = prev.some(d => d._id === newDelivery.deliveryId);
+          if (!exists) {
+            return [newDelivery, ...prev];
+          }
+          return prev;
+        });
+    };
+
+    // Handle delivery updates
+    const handleDeliveryUpdate = (updatedDelivery) => {
+      console.log('Delivery updated:', updatedDelivery);
+      
+      setDeliveries(prev => {
+        const updatedDeliveries = prev.map(delivery => 
+          delivery._id === updatedDelivery._id ? { ...delivery, ...updatedDelivery } : delivery
+        );
+        
+        // Remove delivery if it no longer belongs to current tab
+        return updatedDeliveries.filter(delivery => {
+          switch (activeTab) {
+            case 'pending':
+              return delivery.status === 'pending';
+            case 'ongoing':
+              return ['assigned', 'picked-up'].includes(delivery.status);
+            case 'completed':
+              return delivery.status === 'completed';
+            default:
+              return true;
+          }
+        });
+      });
+    };
+
+    // Register socket event listeners
+    Socket.on('new_delivery', handleNewDelivery);
+    Socket.on('delivery_updated', handleDeliveryUpdate);
+
+    // Cleanup function
+    return () => {
+      Socket.off('new_delivery', handleNewDelivery);
+      Socket.off('delivery_updated', handleDeliveryUpdate);
+    };
+  }, [activeTab]);
+
+  // Fetch deliveries when tab changes
+  useEffect(() => {
+    if (activeTab) {
+      fetchDeliveries();
+    }
+  }, [activeTab, apiEndpoint]);
+
+  // API call function with loading state
+  const performDeliveryAction = async (deliveryId, action, endpoint) => {
+    if (processingDeliveries.has(deliveryId)) return;
+
+    setProcessingDeliveries(prev => new Set(prev).add(deliveryId));
+    
+    try {
+      const token = sessionStorage.getItem('token');
+      await axios.post(
+        `http://localhost:3000/api/logistics/rider/${endpoint}`,
+        { deliveryId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update deliveries based on action
+      if (action === 'accept' || action === 'complete') {
+        setDeliveries(prev => prev.filter(d => d._id !== deliveryId));
+      } else if (action === 'pickup') {
+        // Refresh deliveries after pickup to get updated status
+        fetchDeliveries();
+      }
+      
+    } catch (err) {
+      console.error(`${action} error:`, err);
+      const errorMessage = err.response?.data?.message || `Failed to ${action} delivery`;
+      setError(errorMessage);
+      
+      // Clear error after 5 seconds
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setProcessingDeliveries(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(deliveryId);
+        return newSet;
+      });
+    }
+  };
+
+  // Individual action handlers
   const acceptDelivery = (deliveryId) => {
-    setDeliveries(deliveries.filter(delivery => delivery.id !== deliveryId))
-    // Here you would typically make an API call to accept the delivery
-    console.log(`Accepted delivery ${deliveryId}`)
-  }
+    performDeliveryAction(deliveryId, 'accept', 'acceptDelivery');
+  };
+
+  const pickupDelivery = (deliveryId) => {
+    performDeliveryAction(deliveryId, 'pickup', 'pickupDelivery');
+  };
+
+  const completeDelivery = (deliveryId) => {
+    performDeliveryAction(deliveryId, 'complete', 'completeDelivery');
+  };
+
+  // Date formatter
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  // Render action buttons with loading states
+  const renderActionButtons = (delivery) => {
+    const isProcessing = processingDeliveries.has(delivery._id);
+    
+    const buttonClasses = "w-full font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none";
+    
+    if (delivery.status === 'pending') {
+      return (
+        <div className="p-6 pt-0">
+          <button
+            onClick={() => acceptDelivery(delivery._id)}
+            disabled={isProcessing}
+            className={`${buttonClasses} bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white`}
+          >
+            {isProcessing ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5" />
+                Accept Delivery
+              </>
+            )}
+          </button>
+        </div>
+      );
+    }
+    
+    if (delivery.status === 'assigned') {
+      return (
+        <div className="p-6 pt-0">
+          <button
+            onClick={() => pickupDelivery(delivery._id)}
+            disabled={isProcessing}
+            className={`${buttonClasses} bg-yellow-500 hover:bg-yellow-600 text-white`}
+          >
+            {isProcessing ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                <Truck className="w-5 h-5" />
+                Picked Up
+              </>
+            )}
+          </button>
+        </div>
+      );
+    }
+    
+    if (delivery.status === 'picked-up') {
+      return (
+        <div className="p-6 pt-0">
+          <button
+            onClick={() => completeDelivery(delivery._id)}
+            disabled={isProcessing}
+            className={`${buttonClasses} bg-blue-500 hover:bg-blue-600 text-white`}
+          >
+            {isProcessing ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5" />
+                Delivered
+              </>
+            )}
+          </button>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
+  // Delivery card renderer
+  const renderDeliveryCard = (delivery) => {
+    const isCompleted = activeTab === 'completed';
+    const isOngoing = activeTab === 'ongoing';
+
+    return (
+      <div
+        key={delivery._id}
+        className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-emerald-100 hover:border-emerald-200 transform hover:-translate-y-1"
+      >
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 ${
+                isCompleted 
+                  ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
+                  : isOngoing 
+                    ? 'bg-gradient-to-br from-blue-400 to-cyan-500' 
+                    : 'bg-gradient-to-br from-emerald-400 to-teal-500'
+              } rounded-full flex items-center justify-center`}>
+                {isCompleted ? (
+                  <Star className="w-6 h-6 text-white" />
+                ) : isOngoing ? (
+                  <Truck className="w-6 h-6 text-white" />
+                ) : (
+                  <Package className="w-6 h-6 text-white" />
+                )}
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-800 text-lg">Order #{delivery.order}</h3>
+                <div className="flex items-center gap-1 text-gray-600 text-sm">
+                  <Phone className="w-3 h-3" />
+                  <span>{delivery.contactNumber}</span>
+                </div>
+              </div>
+            </div>
+            <div className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${
+              delivery.status === 'completed' 
+                ? 'text-green-600 bg-green-50' 
+                : delivery.status === 'ongoing' || ['assigned', 'picked-up'].includes(delivery.status)
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-orange-600 bg-orange-50'
+            }`}>
+              {delivery.status}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Clock className="w-4 h-4" />
+              <span>Created: {formatDate(delivery.createdAt)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+              <Package className="w-4 h-4 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-purple-600 text-sm mb-1">ORDER ID</p>
+              <p className="text-gray-800 text-sm font-medium">{delivery.order}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <User className="w-4 h-4 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-blue-600 text-sm mb-1">CUSTOMER</p>
+              <p className="text-gray-800 text-sm font-medium">User ID: {delivery.user}</p>
+              <div className="flex items-center gap-1 text-gray-600 text-xs mt-1">
+                <Phone className="w-3 h-3" />
+                <span>{delivery.contactNumber}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="font-semibold text-gray-700 text-sm mb-2">Delivery Details:</p>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 text-sm">Status:</span>
+                <span className={`text-sm font-semibold capitalize ${
+                  delivery.status === 'completed' 
+                    ? 'text-green-600' 
+                    : ['assigned', 'picked-up'].includes(delivery.status)
+                      ? 'text-blue-600' 
+                      : 'text-orange-600'
+                }`}>
+                  {delivery.status}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 text-sm">Created:</span>
+                <span className="text-gray-800 text-sm">{formatDate(delivery.createdAt)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 text-sm">Delivery ID:</span>
+                <span className="text-gray-800 text-sm font-mono text-xs">{delivery._id}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        {renderActionButtons(delivery)}
+      </div>
+    );
+  };
+
+  // Socket connection status indicator
+  const SocketStatus = () => (
+    <div className="flex items-center gap-2 text-sm">
+      <div className={`w-2 h-2 rounded-full ${Socket.connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+      <span className={Socket.connected ? 'text-green-600' : 'text-red-600'}>
+        {Socket.connected ? 'Live Updates' : 'Offline'}
+      </span>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            Available Deliveries
-          </h1>
-          <p className="text-gray-600 text-lg">
-            {deliveries.length} delivery{deliveries.length !== 1 ? 's' : ''} waiting for pickup
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Deliveries
+            </h1>
+            <SocketStatus />
+          </div>
+          
+          {/* Error Alert */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-500" />
+              <span className="text-red-700 text-sm">{error}</span>
+              <button
+                onClick={() => setError(null)}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                ×
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Delivery Cards Grid */}
-        {deliveries.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {deliveries.map((delivery) => (
-              <div
-                key={delivery.id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-emerald-100 hover:border-emerald-200 transform hover:-translate-y-1"
-              >
-                {/* Card Header */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-800 text-lg">{delivery.customerName}</h3>
-                        <div className="flex items-center gap-1 text-gray-600 text-sm">
-                          <Phone className="w-3 h-3" />
-                          <span>{delivery.customerPhone}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-emerald-600 font-semibold">
-                      <DollarSign className="w-4 h-4" />
-                      <span>{delivery.earnings}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="w-4 h-4" />
-                      <span>{delivery.distance}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pickup & Delivery Info */}
-                <div className="p-6 space-y-4">
-                  {/* Pickup */}
-                  <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <Package className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-blue-600 text-sm mb-1">PICKUP</p>
-                      <p className="text-gray-800 text-sm font-medium">{delivery.pickup.address}</p>
-                      <div className="flex items-center gap-1 text-gray-600 text-xs mt-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{delivery.pickup.time}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Delivery */}
-                  <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-green-600 text-sm mb-1">DELIVERY</p>
-                      <p className="text-gray-800 text-sm font-medium">{delivery.delivery.address}</p>
-                      <div className="flex items-center gap-1 text-gray-600 text-xs mt-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{delivery.delivery.time}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Order Items */}
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="font-semibold text-gray-700 text-sm mb-2">Order Items:</p>
-                    <ul className="space-y-1">
-                      {delivery.items.map((item, index) => (
-                        <li key={index} className="text-gray-600 text-sm flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-gray-700 font-semibold text-sm mt-3">
-                      Order Value: <span className="text-emerald-600">{delivery.orderValue}</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Accept Button */}
-                <div className="p-6 pt-0">
-                  <button
-                    onClick={() => acceptDelivery(delivery.id)}
-                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    Accept Delivery
-                  </button>
-                </div>
-              </div>
-            ))}
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+            <span className="ml-3 text-gray-600">Loading deliveries...</span>
           </div>
-        ) : (
-          // Empty State
+        ) : deliveries.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-6">
               <Package className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">No Available Deliveries</h3>
-            <p className="text-gray-500 text-lg">All deliveries have been accepted. Check back later for new orders!</p>
+            <h3 className="text-2xl font-bold text-gray-700 mb-2">No Deliveries</h3>
+            <p className="text-gray-500 text-lg">
+              {activeTab === 'pending' ? 'Waiting for new orders...' : 'Check back later!'}
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {deliveries.map(renderDeliveryCard)}
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Dashboard;
