@@ -142,7 +142,7 @@ const Delivery = () => {
                     {[
                       { key: 'rider', label: 'Rider', icon: User },
                       { key: 'deliveryPartner', label: 'Partner', icon: Truck }
-                    ].map(({ key, label, icon: Icon }) => (
+                    ].map(({ key, label}) => (
                       <button
                         key={key}
                         type="button"
@@ -249,7 +249,7 @@ const Delivery = () => {
                     {[
                       { key: 'rider', label: 'Rider', icon: User },
                       { key: 'deliveryPartner', label: 'Partner', icon: Truck }
-                    ].map(({ key, label, icon: Icon }) => (
+                    ].map(({ key, label }) => (
                       <button
                         key={key}
                         type="button"

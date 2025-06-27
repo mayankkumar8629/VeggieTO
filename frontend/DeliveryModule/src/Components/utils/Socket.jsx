@@ -5,9 +5,9 @@ const createSocket = () => {
   const token = sessionStorage.getItem("token");
   
   return io("http://localhost:5003", {
-    autoConnect: false, // Keep this false for controlled connection
+    autoConnect: false,
     withCredentials: true,
-    transports: ['polling', 'websocket'], // Try polling first, then websocket
+    transports: ['polling', 'websocket'], 
     upgrade: true,
     rememberUpgrade: false,
     timeout: 20000,
@@ -16,10 +16,10 @@ const createSocket = () => {
     reconnectionAttempts: 5,
     maxReconnectionAttempts: 5,
     auth: {
-      token: token // Send token for authentication
+      token: token 
     },
     query: {
-      token: token // Alternative way to send token
+      token: token 
     }
   });
 };

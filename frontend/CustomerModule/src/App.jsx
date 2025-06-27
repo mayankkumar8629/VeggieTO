@@ -13,6 +13,8 @@ import './index.css';
 import { ProductArea } from './components/ProductPage/ProductArea';
 import { Cart } from './components/Carts/Cart';
 import OrderSummary from './components/OrderSummary/OrderSummary';
+import { Profile } from './components/ProfilePage/Profile';
+import Order from './components/OrderPage/Order';
 
 function App() {
   return (
@@ -60,6 +62,26 @@ function App() {
             <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
               <Navbar />
               <OrderSummary />
+              <Footer />
+            </div>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
+              <Navbar />
+              <Profile />
+              <Footer />
+            </div>
+          } 
+        />
+        <Route 
+          path="/orders" 
+          element={
+            <div className="h-screen max-w-[90%] justify-center items-center mx-auto">
+              <Navbar />
+              <Order />
               <Footer />
             </div>
           } 
