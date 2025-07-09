@@ -1,49 +1,91 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Package, Truck, User, Mail, Phone, Lock, Sparkles } from 'lucide-react';
-import axios from 'axios';
-import Socket from './utils/Socket';
-import { nav } from 'framer-motion/client';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import {
+  Eye,
+  EyeOff,
+  Package,
+  Truck,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  Sparkles,
+  CheckCircle,
+} from "lucide-react";
+import axios from "axios";
+import Socket from "./utils/Socket";
+import { nav } from "framer-motion/client";
+import { useNavigate } from "react-router-dom";
 
 const Delivery = () => {
-  const [authTab, setAuthTab] = useState('login');
-  const [userRole, setUserRole] = useState('rider');
+  const [authTab, setAuthTab] = useState("login");
+  const [userRole, setUserRole] = useState("rider");
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: ''
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  // COMPLETELY NEW - This entire function was added
+  const simulateProgress = async () => {
+    setIsLoading(true);
+    setProgress(0);
+    setIsSuccess(false);
+
+    // Simulate progress steps
+    const progressSteps = [20, 40, 60, 80, 100];
+
+    for (let i = 0; i < progressSteps.length; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setProgress(progressSteps[i]);
+    }
+
+    // Show success state
+    setIsSuccess(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Reset states
+    setIsLoading(false);
+    setProgress(0);
+    setIsSuccess(false);
+  };
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log('Signup data:', formData, userRole);
+    console.log("Signup data:", formData, userRole);
   };
 
-  const handleLogin = async(e) => {
-     e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    await simulateProgress(); // NEW LINE
     try {
-      const res = await axios.post("http://localhost:3000/api/logistics/rider/riderLogin", {
-        email: formData.email,
-        password: formData.password,
-      });
-      sessionStorage.setItem('token', res.data.token);
+      const res = await axios.post(
+        "http://localhost:3000/api/logistics/rider/riderLogin",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+      sessionStorage.setItem("token", res.data.token);
       console.log("Token stored in sessionStorage:", res.data.token);
       const token = res.data.token;
       Socket.auth = { token };
       Socket.connect();
 
-     Socket.on("connect", () => {
-      console.log("Socket connected with id:", Socket.id);
-    });
+      Socket.on("connect", () => {
+        console.log("Socket connected with id:", Socket.id);
+      });
       console.log("Login successful", res.data);
-      navigate('/dashboard', { state: { loginData: res.data } });
+      navigate("/dashboard", { state: { loginData: res.data } });
     } catch (err) {
       console.error("Login failed", err);
     }
@@ -51,6 +93,9 @@ const Delivery = () => {
 
   const switchTab = (tab) => {
     setAuthTab(tab);
+    setIsLoading(false); // NEW
+    setProgress(0); // NEW
+    setIsSuccess(false); // NEW
   };
 
   return (
@@ -71,16 +116,59 @@ const Delivery = () => {
             <div className="absolute bottom-8 w-full h-4 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full shadow-lg">
               <div className="w-full h-1 bg-white rounded-full mt-1.5 opacity-60"></div>
             </div>
-            
+
             {/* Animated Delivery Person */}
-            <div className="absolute bottom-12 animate-bounce">
+            <div className="absolute bottom-8 w-full h-4 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full shadow-lg">
+              <div className="w-full h-1 bg-white rounded-full mt-1.5 opacity-60"></div>
+            </div>
+
+            {/* NEW - Progress Track */}
+            {isLoading && (
+              <div className="absolute bottom-4 w-full h-2 bg-gray-200 rounded-full">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            )}
+
+            {/* UPDATED - Moving delivery person */}
+            <div
+              className={`absolute bottom-12 transition-all duration-500 ${
+                isLoading ? "animate-none" : "animate-bounce"
+              }`}
+              style={{
+                left: isLoading ? `${progress * 0.8}%` : "0%",
+                transform: isLoading ? "translateX(-50%)" : "translateX(0)",
+              }}
+            >
               <div className="relative">
-                <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                  <Package className="w-8 h-8 text-white" />
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+                    isSuccess
+                      ? "bg-green-500 animate-pulse"
+                      : isLoading
+                      ? "bg-emerald-600 animate-spin"
+                      : "bg-emerald-500 animate-pulse"
+                  }`}
+                >
+                  {isSuccess ? (
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  ) : (
+                    <Package className="w-8 h-8 text-white" />
+                  )}
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 text-yellow-700" />
-                </div>
+
+                {/* NEW - Progress indicator */}
+                {isLoading && (
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-white rounded-full px-2 py-1 shadow-md">
+                      <span className="text-xs font-semibold text-emerald-600">
+                        {progress}%
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -92,11 +180,10 @@ const Delivery = () => {
               <Package className="w-6 h-6 text-green-400 opacity-60" />
             </div>
           </div>
-
           {/* Welcome Text */}
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-              QuickDeliver
+              Krishi-Express
             </h1>
             <p className="text-gray-600 text-lg">
               Join the fastest delivery network
@@ -111,21 +198,21 @@ const Delivery = () => {
             <div className="flex justify-center mb-8">
               <div className="bg-gray-100 rounded-full p-1 flex">
                 <button
-                  onClick={() => switchTab('login')}
+                  onClick={() => switchTab("login")}
                   className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    authTab === 'login'
-                      ? 'bg-emerald-500 text-white shadow-lg transform scale-105'
-                      : 'text-gray-600 hover:text-emerald-600'
+                    authTab === "login"
+                      ? "bg-emerald-500 text-white shadow-lg transform scale-105"
+                      : "text-gray-600 hover:text-emerald-600"
                   }`}
                 >
                   Login
                 </button>
                 <button
-                  onClick={() => switchTab('signup')}
+                  onClick={() => switchTab("signup")}
                   className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    authTab === 'signup'
-                      ? 'bg-emerald-500 text-white shadow-lg transform scale-105'
-                      : 'text-gray-600 hover:text-emerald-600'
+                    authTab === "signup"
+                      ? "bg-emerald-500 text-white shadow-lg transform scale-105"
+                      : "text-gray-600 hover:text-emerald-600"
                   }`}
                 >
                   Sign Up
@@ -133,23 +220,25 @@ const Delivery = () => {
               </div>
             </div>
 
-            {authTab === 'signup' ? (
+            {authTab === "signup" ? (
               <div className="space-y-6">
                 {/* Role Selection */}
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700">Choose your role</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Choose your role
+                  </label>
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { key: 'rider', label: 'Rider', icon: User },
-                      { key: 'deliveryPartner', label: 'Partner', icon: Truck }
-                    ].map(({ key, label}) => (
+                      { key: "rider", label: "Rider", icon: User },
+                      { key: "deliveryPartner", label: "Partner", icon: Truck },
+                    ].map(({ key, label }) => (
                       <button
                         key={key}
                         type="button"
                         className={`p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center space-y-2 ${
                           userRole === key
-                            ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg transform scale-105'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:shadow-md'
+                            ? "bg-emerald-500 text-white border-emerald-500 shadow-lg transform scale-105"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:shadow-md"
                         }`}
                         onClick={() => setUserRole(key)}
                       >
@@ -204,7 +293,7 @@ const Delivery = () => {
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       placeholder="Password"
                       value={formData.password}
@@ -217,7 +306,11 @@ const Delivery = () => {
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-emerald-500 transition-colors duration-200"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -231,10 +324,10 @@ const Delivery = () => {
                 </button>
 
                 <p className="text-center text-gray-600">
-                  Already have an account?{' '}
+                  Already have an account?{" "}
                   <span
                     className="text-emerald-600 font-semibold cursor-pointer hover:text-emerald-700 transition-colors duration-200"
-                    onClick={() => switchTab('login')}
+                    onClick={() => switchTab("login")}
                   >
                     Login here
                   </span>
@@ -244,23 +337,24 @@ const Delivery = () => {
               <div className="space-y-6">
                 {/* Role Selection */}
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700">Login as</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Login as
+                  </label>
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { key: 'rider', label: 'Rider', icon: User },
-                      { key: 'deliveryPartner', label: 'Partner', icon: Truck }
+                      { key: "rider", label: "Rider", icon: User },
+                      { key: "deliveryPartner", label: "Partner", icon: Truck },
                     ].map(({ key, label }) => (
                       <button
                         key={key}
                         type="button"
                         className={`p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center space-y-2 ${
                           userRole === key
-                            ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg transform scale-105'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:shadow-md'
+                            ? "bg-emerald-500 text-white border-emerald-500 shadow-lg transform scale-105"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:shadow-md"
                         }`}
                         onClick={() => setUserRole(key)}
                       >
-                        <Icon className="w-6 h-6" />
                         <span className="text-sm font-medium">{label}</span>
                       </button>
                     ))}
@@ -285,7 +379,7 @@ const Delivery = () => {
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       placeholder="Password"
                       value={formData.password}
@@ -298,7 +392,11 @@ const Delivery = () => {
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-emerald-500 transition-colors duration-200"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -306,22 +404,31 @@ const Delivery = () => {
                 <button
                   type="submit"
                   onClick={handleLogin}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-green-500 text-white py-4 rounded-2xl font-semibold hover:from-emerald-600 hover:to-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  disabled={isLoading} // NEW
+                  className={`w-full bg-gradient-to-r from-emerald-500 to-green-500 text-white py-4 rounded-2xl font-semibold hover:from-emerald-600 hover:to-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl ${
+                    isLoading
+                      ? "opacity-50 cursor-not-allowed transform-none"
+                      : "" // NEW
+                  }`}
                 >
-                  Login
+                  {isLoading ? "Logging in..." : "Login"}{" "}
+                  {/* NEW - Dynamic text */}
                 </button>
 
                 <div className="text-center">
-                  <a href="#" className="text-sm text-emerald-600 hover:text-emerald-700 transition-colors duration-200">
+                  <a
+                    href="#"
+                    className="text-sm text-emerald-600 hover:text-emerald-700 transition-colors duration-200"
+                  >
                     Forgot your password?
                   </a>
                 </div>
 
                 <p className="text-center text-gray-600">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <span
                     className="text-emerald-600 font-semibold cursor-pointer hover:text-emerald-700 transition-colors duration-200"
-                    onClick={() => switchTab('signup')}
+                    onClick={() => switchTab("signup")}
                   >
                     Sign up here
                   </span>
@@ -334,19 +441,29 @@ const Delivery = () => {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
-        
+
         @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-15px);
+          }
         }
-        
+
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
-        
+
         .animate-float-delayed {
           animation: float-delayed 3s ease-in-out infinite 1.5s;
         }
