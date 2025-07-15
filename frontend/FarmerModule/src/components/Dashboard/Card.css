@@ -1,0 +1,20 @@
+.card{
+    background-color:#fff;
+    transition: 0.4s;
+    cursor:pointer;
+    color:#000;
+    margin-bottom:1rem;
+    border-color:rgba(231,234,243,0.7);
+}
+
+.card h6{
+    text-transform: uppercase;
+    font-size:0.7161rem;
+    margin-bottom:0.25rem;
+}
+
+.card:hover{
+    background-color: #293b5f;
+    color: #fff;
+    transform: translateY(-10.5px);
+}
