@@ -30,6 +30,7 @@ export function setupOrderListeners(){
 
 
             });
+            await Delivery.save();
             const order= await Order.findById(orderId)
             .populate({
                 path:'user',
@@ -39,6 +40,19 @@ export function setupOrderListeners(){
                 path:'items.itemId',
                 select:"name"
             });
+            const currDelivery = await Delivery.findById(delivery._id)
+             .populate({
+                        path:'user',
+                        select:'name contactNumber address'
+                    })
+                    .populate({
+                        path:'order',
+                        populate:{
+                            path:'items.itemId',
+                            select:'name'
+                        }
+            });
+                   
             await delivery.save();
             // const riderNotification = {
             //     deliveryId:delivery._id,
@@ -49,8 +63,7 @@ export function setupOrderListeners(){
             //     createdAt:Date.now()
             // };
             const riderNotification={
-                order,
-                deliveryId:delivery._id,
+                currDelivery,
                 createdAt:Date.now()
             };
 
