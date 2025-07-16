@@ -301,7 +301,7 @@ const Dashboard = ({ activeTab }) => {
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-gray-800 text-lg">Order #{delivery.order}</h3>
+                <h3 className="font-bold text-gray-800 text-lg">Order #{delivery.order._id}</h3>
                 <div className="flex items-center gap-1 text-gray-600 text-sm">
                   <Phone className="w-3 h-3" />
                   <span>{delivery.contactNumber}</span>
@@ -334,7 +334,7 @@ const Dashboard = ({ activeTab }) => {
             </div>
             <div className="flex-1">
               <p className="font-semibold text-purple-600 text-sm mb-1">ORDER ID</p>
-              <p className="text-gray-800 text-sm font-medium">{delivery.order}</p>
+               
             </div>
           </div>
 
@@ -344,7 +344,7 @@ const Dashboard = ({ activeTab }) => {
             </div>
             <div className="flex-1">
               <p className="font-semibold text-blue-600 text-sm mb-1">CUSTOMER</p>
-              <p className="text-gray-800 text-sm font-medium">User ID: {delivery.user}</p>
+              <p className="text-gray-800 text-sm font-medium">User: {delivery.user.name}</p>
               <div className="flex items-center gap-1 text-gray-600 text-xs mt-1">
                 <Phone className="w-3 h-3" />
                 <span>{delivery.contactNumber}</span>
