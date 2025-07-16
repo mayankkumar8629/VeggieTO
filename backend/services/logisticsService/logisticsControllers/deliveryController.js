@@ -2,6 +2,7 @@ import { subscriber } from "../../../config/redisPubSub.js";
 import { notifyAvailableRiders } from "../config/websocket.js";
 import Delivery from "../../../UserModel/delivery.model.js";
 import Customer from "../../../UserModel/customer.model.js";
+import Order from "../../../UserModel/order.model.js";
 
 
 export function setupOrderListeners(){
@@ -29,13 +30,27 @@ export function setupOrderListeners(){
 
 
             });
+            const order= await Order.findById(orderId)
+            .populate({
+                path:'user',
+                select:'name contactNumber address'
+            })
+            .populate({
+                path:'items.itemId',
+                select:"name"
+            });
             await delivery.save();
-            const riderNotification = {
+            // const riderNotification = {
+            //     deliveryId:delivery._id,
+            //     orderId:orderId,
+            //     items:items,
+            //     userId:userId,
+            //     address:customer.address,
+            //     createdAt:Date.now()
+            // };
+            const riderNotification={
+                order,
                 deliveryId:delivery._id,
-                orderId:orderId,
-                items:items,
-                userId:userId,
-                address:customer.address,
                 createdAt:Date.now()
             };
 

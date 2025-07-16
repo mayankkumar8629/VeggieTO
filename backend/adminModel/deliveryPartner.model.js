@@ -31,10 +31,10 @@ const deliveryPartnerSchema = new Schema({
         type:String,
         required:true
     },
-    shipment:{
+    shipment:[{
         type:Schema.Types.ObjectId,
         ref:"Shipment"
-    },
+    }],
     isAvailable:{
         type:Boolean,
         default:true

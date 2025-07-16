@@ -162,6 +162,11 @@ export const verifyPayment = async (req, res) => {
             },
             { new: true }
         );
+        //clearing the cart after successful payment
+        const user=updatedOrder.user;
+        await Cart.deleteMany({user});
+        await Customer.findByIdAndUpdate(user,{cart:null});
+        //////////
         if (!updatedOrder) {
             return res.status(404).json({
                 success: false,

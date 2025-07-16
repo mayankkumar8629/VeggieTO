@@ -14,6 +14,7 @@ export const login = async(req,res)=>{
         const {email,password,role}=req.body;
         let user=null;
         
+        
         if(role==="customer"){
             user=await Customer.findOne({email});
         }else if(role==="farmer"){

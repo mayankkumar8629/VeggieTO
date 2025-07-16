@@ -224,7 +224,12 @@ export const removeCartItem = async(req,res)=>{
       if(cart.items.length===initialLength){
         return res.status(404).json({message:"Item not in the cart"});
       }
-      await cart.save(session);
+      if(cart.items.length===0){
+        await Cart.deleteOne({_id:cart._id}).session(session);
+        await Customer.findByIdAndUpdate(userId,{cart:null},{session});
+      }else{
+        await cart.save({session});
+      }
     });
     const updatedCart=await Cart.findOne({user:req.user.id}).populate('items.itemId','name price');
     return res.status(200).json({
@@ -236,4 +241,28 @@ export const removeCartItem = async(req,res)=>{
     return res.status(500).json({message:"Error deleting item from the cart",error});
   }
 
+}
+
+///clear all the items in the cart
+export const clearCart = async(req,res)=>{
+  try{
+    const cartId=req.params.cartId;
+    const userId=req.user.id;
+    if(!mongoose.Types.ObjectId.isValid(cartId)){
+      return res.status(400).json({message:"Invalid cart id"});
+    }
+    const cart= await Cart.findById(cartId);
+    if(!cart){
+      return res.status(404).json({message:"Cart not found"});
+    }
+    await Cart.deleteOne({_id:cartId});
+    await Customer.findByIdAndUpdate(
+      {userId},
+      {cart:null},
+      {new:true}
+    )
+  }catch(error){
+    console.error("Error clearing cart:", error);
+    return res.status(500).json({message:"Error clearing cart",error});
+  }
 }

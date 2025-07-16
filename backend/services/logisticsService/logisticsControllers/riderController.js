@@ -81,9 +81,22 @@ export const getPendingDeliveries = async(req,res)=>{
         if(!rider){
             return res.status(404).json({message:"Rider not found"});
         }
-        const deliveries = await Delivery.find({
-            status:"pending"
+        // const deliveries = await Delivery.find({
+        //     status:"pending"
+        // });
+        const deliveries = await Delivery.find({status:"pending"})
+        .populate({
+            path:'user',
+            select:'name contactNumber address'
+        })
+        .populate({
+            path:'order',
+            populate:{
+                path:'items.itemId',
+                select:'name'
+            }
         });
+    
         if(deliveries === undefined || deliveries.length === 0){
             return res.status(404).json({message:"No pending deliveries found"});
         }
@@ -94,6 +107,62 @@ export const getPendingDeliveries = async(req,res)=>{
 
     }catch(error){
         console.error("Error in getPendingDeliveries:", error);
+        return res.status(500).json({message:"Internal server error"});
+    }
+}
+//get rider profile
+export const getRiderProfile = async(req,res)=>{
+    try{
+        const riderId=req.user.id;
+        const rider = await Rider.findById(riderId);
+        if(!rider){
+            return res.status(404).json({message:"Rider not found"});
+        }
+        return res.status(200).json({
+            message:"Rider profile fetched successfully",
+            rider:{
+                name:rider.name,
+                email:rider.email,
+                contactNumber:rider.contactNumber,
+                address:rider.address
+            }
+        })
+
+    }catch(error){
+        console.error("Error in getRiderProfile:", error);
+        return res.status(500).json({message:"Internal server error"});
+    }
+}
+//update rider profile
+export const updateRiderProfile = async(req,res)=>{
+    try{
+        const riderId=req.user.id;
+        const {name,email,contactNumber,address}=req.body;
+        if(!name || !email || !contactNumber || !address){
+            return res.status(400).json({message:"Please fill all the fields"});
+        }
+        const rider = await Rider.findByIdAndUpdate(
+            riderId,
+            {
+                name,
+                email,
+                contactNumber,
+                address
+            },
+            {new:true}
+        );
+        await rider.save();
+        return res.status(200).json({
+            message:"Rider profile updated successfully",
+            rider:{
+                name:rider.name,
+                email:rider.email,
+                contactNumber:rider.contactNumber,
+                address:rider.address
+            }
+        });
+    }catch(error){
+        console.error("Error in updateRiderProfile:", error);
         return res.status(500).json({message:"Internal server error"});
     }
 }
