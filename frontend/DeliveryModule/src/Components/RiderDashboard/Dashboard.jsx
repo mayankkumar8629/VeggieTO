@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { MapPin, Clock, DollarSign, Package, CheckCircle, User, Phone, Truck, Star, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Socket from '../utils/Socket'; // Adjust path as needed
+import Socket from '../utils/Socket'; 
 
 const Dashboard = ({ activeTab }) => {
   const [deliveries, setDeliveries] = useState([]);
@@ -45,6 +45,7 @@ const Dashboard = ({ activeTab }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const fetchedDeliveries = response.data?.deliveries || [];
+      console.log('Fetched deliveries:', fetchedDeliveries);
       setDeliveries(fetchedDeliveries);
     } catch (err) {
       console.error('Fetch deliveries error:', err);
