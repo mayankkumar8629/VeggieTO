@@ -13,14 +13,14 @@ const cartSlice = createSlice({
         addToCart: (state) => {
             state.cartItems += 1;
         },
-        removeFromCart: (state) => {
-            state.cartItems = Math.max(state.cartItems - 1, 0);
+        removeFromCart: (state, action) => {
+            state.cartItems = Math.max(state.cartItems - action.payload, 0);
         },
-        setCartItems: (state, action) => {
+        setCartItemRedux: (state, action) => {
             state.cartItems = action.payload;
         },
     },
 });
 
-export const { addToCart, removeFromCart, setCartItems } = cartSlice.actions;
+export const { addToCart, removeFromCart, setCartItemRedux } = cartSlice.actions;
 export default cartSlice.reducer;

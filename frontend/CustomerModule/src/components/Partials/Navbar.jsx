@@ -21,6 +21,9 @@ import ProfileMenu from "./utils/ProfileMenu";
 import { Link } from "react-router-dom";
 import SearchBar from "./utils/SearchBar";
 import krishi from '../../assets/krishi.svg';
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setCartItemRedux } from "../../store/cartSlice";
 
 const roleIcons = {
   customer: Users,
@@ -34,8 +37,9 @@ const Navbar = () => {
   const [authTab, setAuthTab] = useState("login");
   const [userRole, setUserRole] = useState("customer");
   const [showPassword, setShowPassword] = useState(false);
-  const [cartItems, setCartItems] = useState(3); // Mock cart items count
+  const dispatch = useDispatch();
   const [notifications, setNotifications] = useState(2); // Mock notifications count
+  const cartItems = useSelector((state) =>state.cart.cartItems);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -48,6 +52,25 @@ const Navbar = () => {
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", dialogOpen);
   }, [dialogOpen]);
+
+
+
+  useEffect(()=>{
+    const fetchCartItems = async () => {
+    const response = await axios.get(
+        "http://localhost:3000/api/customer/cart/getCart",
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      const cartData = response.data.cart.items;
+      const itemCount = cartData.reduce((total, item) => total +item.quantity, 0);
+      dispatch(setCartItemRedux(itemCount));
+    }
+    fetchCartItems();
+  });
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
   const loginDialog = () => {

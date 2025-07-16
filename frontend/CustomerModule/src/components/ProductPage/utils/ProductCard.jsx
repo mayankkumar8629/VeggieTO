@@ -1,8 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { addToCart, removeFromCart } from '../../../store/cartSlice';
+import { useDispatch } from 'react-redux';
 
 export const ProductCard = ({ id, cart, Image, Name, Category, price }) => {
   const [quantity, setQuantity] = useState(0);
+  const dispatch = useDispatch();
 
   // ✅ Use useEffect to sync quantity with cart data
   useEffect(() => {
@@ -28,6 +31,7 @@ export const ProductCard = ({ id, cart, Image, Name, Category, price }) => {
           }
         })
       setQuantity(1);  // Set quantity to 1 when Add to Cart is clicked
+      dispatch(addToCart());
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -45,6 +49,7 @@ export const ProductCard = ({ id, cart, Image, Name, Category, price }) => {
       })
       const newQuantity = response.data.cart.items.find(item => item.itemId._id === id)?.quantity || 0;
       setQuantity(newQuantity);
+      dispatch(addToCart());
     } catch (error) {
       console.error('Error increasing quantity:', error);
     }
@@ -61,6 +66,7 @@ export const ProductCard = ({ id, cart, Image, Name, Category, price }) => {
         }
       })
       const newQuantity = response.data.cart.items.find(item => item.itemId._id === id)?.quantity || 0;
+      dispatch(removeFromCart(1));
       if (newQuantity > 0) {
         setQuantity(newQuantity);
       } else {

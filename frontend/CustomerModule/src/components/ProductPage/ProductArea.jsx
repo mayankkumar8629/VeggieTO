@@ -4,6 +4,7 @@ import { Slider } from './utils/Slider';
 import { ProductCard } from './utils/ProductCard';
 import { FaSlidersH } from 'react-icons/fa';
 
+
 export const ProductArea = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -12,6 +13,7 @@ export const ProductArea = () => {
    const [minValue, setMinValue] = useState(0);
   const [maxValue, setMaxValue] = useState(900);
   const [allProducts, setAllProducts] = useState([]);
+ 
 
 
   const token = sessionStorage.getItem('token');
