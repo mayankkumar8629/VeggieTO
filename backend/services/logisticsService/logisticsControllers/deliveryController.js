@@ -15,6 +15,7 @@ export function setupOrderListeners(){
         }
         try{
             const {eventId,orderId,userId,items}=JSON.parse(message);
+            console.log("Req comming on the channel");
             
             const customer = await Customer.findById(userId);
             if(!customer){
@@ -30,16 +31,17 @@ export function setupOrderListeners(){
 
 
             });
-            await Delivery.save();
-            const order= await Order.findById(orderId)
-            .populate({
-                path:'user',
-                select:'name contactNumber address'
-            })
-            .populate({
-                path:'items.itemId',
-                select:"name"
-            });
+            console.log(delivery);
+            await delivery.save();
+            // const order= await Order.findById(orderId)
+            // .populate({
+            //     path:'user',
+            //     select:'name contactNumber address'
+            // })
+            // .populate({
+            //     path:'items.itemId',
+            //     select:"name"
+            // });
             const currDelivery = await Delivery.findById(delivery._id)
              .populate({
                         path:'user',
@@ -52,8 +54,9 @@ export function setupOrderListeners(){
                             select:'name'
                         }
             });
+            console.log(currDelivery);
                    
-            await delivery.save();
+            
             // const riderNotification = {
             //     deliveryId:delivery._id,
             //     orderId:orderId,

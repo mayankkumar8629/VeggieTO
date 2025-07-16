@@ -174,10 +174,24 @@ export const getOngoingDeliveries = async(req,res)=>{
         if(!rider){
             return res.status(404).json({message:"Rider not found"});
         }
+
+
         const deliveries = await Delivery.find({
             rider:riderId,
             status: { $in: ["assigned", "picked-up"] }
+        })
+        .populate({
+            path:'user',
+            select:'name contactNumber address'
+        })
+        .populate({
+            path:'order',
+            populate:{
+                path:'items.itemId',
+                select:'name'
+            }
         });
+
         if(deliveries === undefined || deliveries.length === 0){
             return res.status(404).json({message:"No ongoing deliveries found"});
         }
@@ -202,7 +216,19 @@ export const getAllCompletedDeliveries = async(req,res)=>{
         const deliveries = await Delivery.find({
             rider:riderId,
             status: "delivered"
-        });
+        })
+        .populate({
+            path:'user',
+            select:'name contactNumber address'
+        })
+        .populate({
+            path:'order',
+            populate:{
+                path:'items.itemId',
+                select:'name'
+            }
+        })
+        console.log(deliveries);
         if(deliveries === undefined || deliveries.length === 0){
             return res.status(404).json({message:"No completed deliveries found"});
         }
