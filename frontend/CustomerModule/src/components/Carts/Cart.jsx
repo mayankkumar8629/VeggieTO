@@ -158,7 +158,8 @@ export const Cart = () => {
             console.log("Payment verification response:", paymentResponse.data);
             const orderData = paymentResponse.data.order;
             alert(paymentResponse.data.message);
-            fetchCartItems(); 
+            fetchCartItems();
+            dispatch(setCartItemRedux(0));
             navigate("/orderSummary", {state: { orderData } }); // Redirect to products page with order data
           } catch (error) {
             console.error("Payment verification error:", error);

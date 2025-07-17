@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    notification: [],
+    notifications: [],
 }
 
 
@@ -10,7 +10,7 @@ const notificationSlice = createSlice({
     initialState,
     reducers: {
         addNotification: (state, action) => {
-            state.notification.push({
+            state.notifications.push({
                 message: action.payload,
                 timestamp: new Date().toString(),
             });

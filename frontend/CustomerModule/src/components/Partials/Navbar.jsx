@@ -25,6 +25,8 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setCartItemRedux } from "../../store/cartSlice";
 import socket from "../../config/Socket";
+import { addNotification } from "../../store/NotificationSlice";
+import NotificationMenu from "./utils/NotificationMenu";
 
 const roleIcons = {
   customer: Users,
@@ -39,7 +41,11 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState("customer");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  const [notifications, setNotifications] = useState(2); // Mock notifications count
+  const notifications = useSelector(
+    (state) => state.notification.notifications.length
+  ); 
+  const notificationData = useSelector((state)=> state.notification.notifications);
+  console.log("Notification Data:", notificationData);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [formData, setFormData] = useState({
     name: "",
@@ -63,15 +69,20 @@ const Navbar = () => {
 
     const handleDelivery = (data) => {
       console.log("Delivery update received:", data);
+      if (data.status) {
+        data.message = `Delivery ${data.status} for order to ${data.riderName}`;
+      }
+      dispatch(addNotification(data.message));
     };
 
-    socket.on('delivery_assigned', handleDelivery);
-    socket.on('delivery_picked_up', handleDelivery);
+    socket.on("delivery_assigned", handleDelivery);
+    socket.on("delivery_picked_up", handleDelivery);
+    socket.on("");
 
-    return ()=>{
-      socket.off('delivery_assigned', handleDelivery);
-      socket.off('delivery_picked_up', handleDelivery);
-    }
+    return () => {
+      socket.off("delivery_assigned", handleDelivery);
+      socket.off("delivery_picked_up", handleDelivery);
+    };
   });
 
   useEffect(() => {
@@ -178,7 +189,6 @@ const Navbar = () => {
                 className="h-15 w-full justify-center"
               />
             </motion.div>
-
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center space-x-8">
               {[
@@ -198,29 +208,14 @@ const Navbar = () => {
                 </motion.a>
               ))}
             </div>
-
             {/* Search Bar - Desktop */}
             <SearchBar className="hidden md:block w-1/3" />
-
             {/* Right Section */}
             <div className="flex items-center space-x-4">
               {loggedIn ? (
                 <>
-                  {/* Notification Bell */}
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="relative cursor-pointer"
-                  >
-                    <div className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-300">
-                      <Bell className="w-6 h-6 text-gray-600 hover:text-green-600" />
-                    </div>
-                    {notifications > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                        {notifications}
-                      </span>
-                    )}
-                  </motion.div>
+                  {/* Notification Menu - Replace the existing notification bell */}
+                  <NotificationMenu notifications={notifications} notificationData={notificationData} />
 
                   {/* Shopping Cart */}
                   <Link to="/cart">

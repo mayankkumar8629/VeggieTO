@@ -30,8 +30,8 @@ export const ProductArea = () => {
         ...product,
         images: "https://picsum.photos/800"
       }));
-
-      return updated;
+      const updatedNotStock = updated.filter((product) => product.stock !== 0)
+      return updatedNotStock;;
     } catch (error) {
       console.error(`Error fetching products for category ${category}:`, error);
       return [];
