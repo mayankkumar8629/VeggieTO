@@ -80,9 +80,9 @@ const Dashboard = ({ activeTab }) => {
       // Only add to pending deliveries if we're on pending tab
         setDeliveries(prev => {
           // Check if delivery already exists to prevent duplicates
-          const exists = prev.some(d => d._id === newDelivery.deliveryId);
+          const exists = prev.some(d => d._id === newDelivery.currDelivery.deliveryId);
           if (!exists) {
-            return [newDelivery, ...prev];
+            return [newDelivery.currDelivery, ...prev];
           }
           return prev;
         });

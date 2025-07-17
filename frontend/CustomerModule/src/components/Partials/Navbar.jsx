@@ -20,10 +20,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProfileMenu from "./utils/ProfileMenu";
 import { Link } from "react-router-dom";
 import SearchBar from "./utils/SearchBar";
-import krishi from '../../assets/krishi.svg';
+import krishi from "../../assets/krishi.svg";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setCartItemRedux } from "../../store/cartSlice";
+import socket from "../../config/Socket";
 
 const roleIcons = {
   customer: Users,
@@ -39,7 +40,7 @@ const Navbar = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState(2); // Mock notifications count
-  const cartItems = useSelector((state) =>state.cart.cartItems);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,11 +54,29 @@ const Navbar = () => {
     document.body.classList.toggle("overflow-hidden", dialogOpen);
   }, [dialogOpen]);
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+    if (!socket.connected) {
+      socket.connect();
+    }
 
+    const handleDelivery = (data) => {
+      console.log("Delivery update received:", data);
+    };
 
-  useEffect(()=>{
+    socket.on('delivery_assigned', handleDelivery);
+    socket.on('delivery_picked_up', handleDelivery);
+
+    return ()=>{
+      socket.off('delivery_assigned', handleDelivery);
+      socket.off('delivery_picked_up', handleDelivery);
+    }
+  });
+
+  useEffect(() => {
     const fetchCartItems = async () => {
-    const response = await axios.get(
+      const response = await axios.get(
         "http://localhost:3000/api/customer/cart/getCart",
         {
           headers: {
@@ -66,9 +85,12 @@ const Navbar = () => {
         }
       );
       const cartData = response.data.cart.items;
-      const itemCount = cartData.reduce((total, item) => total +item.quantity, 0);
+      const itemCount = cartData.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
       dispatch(setCartItemRedux(itemCount));
-    }
+    };
     fetchCartItems();
   });
 
@@ -150,7 +172,11 @@ const Navbar = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-3"
             >
-              <img src={krishi} alt="Krishi Logo" className="h-15 w-full justify-center" />
+              <img
+                src={krishi}
+                alt="Krishi Logo"
+                className="h-15 w-full justify-center"
+              />
             </motion.div>
 
             {/* Navigation Links - Desktop */}

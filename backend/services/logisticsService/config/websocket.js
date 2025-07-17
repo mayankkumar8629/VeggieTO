@@ -13,7 +13,10 @@ export const activeConnections = {
 export function initSocket(server) {
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:5173", // Allow all origins (for development)
+            origin: [
+                "http://localhost:5173",
+                "http://localhost:5174"
+            ], // Allow all origins (for development)
             methods: ["GET", "POST"],
             allowedHeaders: ["Authorization"],
             credentials: true
@@ -74,8 +77,8 @@ export function initSocket(server) {
                 const connectionMap = role === 'rider'
                     ? activeConnections.riders
                     : activeConnections.deliveryPartners;
-                
-                console.log(activeConnections.riders.get(id));    
+
+                console.log(activeConnections.riders.get(id));
 
                 const user = connectionMap.get(id);
                 if (user) {
@@ -102,9 +105,11 @@ export function initSocket(server) {
 }
 //function to notify the customer
 export function notifyCustomer(customerId, event, data) {
-    const customerSocket = activeConnections.customers.get(customerId);
+    // Yahan par tha error , customerId ko string mein convert karna tha, farmer me v aa sakta hai uper
+    const customerSocket = activeConnections.customers.get(customerId.toString());
     if (customerSocket) {
         try {
+            console.log("Notifying customer:", customerId.toString());
             customerSocket.emit(event, data);
         } catch (error) {
             console.error("Error notifying customer", error);

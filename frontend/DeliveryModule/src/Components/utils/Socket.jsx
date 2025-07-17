@@ -59,7 +59,6 @@ Socket.on('connect_error', (error) => {
 Socket.on('disconnect', (reason) => {
   console.log('Socket disconnected:', reason);
   if (reason === 'io server disconnect') {
-    // the disconnection was initiated by the server, you need to reconnect manually
     console.log('Server disconnected, attempting manual reconnection...');
     setTimeout(() => {
       if (!Socket.connected) {
