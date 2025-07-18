@@ -27,6 +27,7 @@ import { setCartItemRedux } from "../../store/cartSlice";
 import socket from "../../config/Socket";
 import { addNotification } from "../../store/NotificationSlice";
 import NotificationMenu from "./utils/NotificationMenu";
+import { toast } from "react-toastify";
 
 const roleIcons = {
   customer: Users,
@@ -132,7 +133,9 @@ const Navbar = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const axios = (await import("axios")).default;
+      if(formData.email === "" || formData.password === "") {
+        return toast.error("Please fill in all fields");
+      }
       const res = await axios.post("http://localhost:3000/api/login", {
         email: formData.email,
         password: formData.password,
@@ -141,6 +144,7 @@ const Navbar = () => {
       sessionStorage.setItem("token", res.data.token);
       setDialogOpen(false);
     } catch (err) {
+      toast.error("Login failed. Please check your credentials.");
       console.error("Login failed", err);
     }
   };
