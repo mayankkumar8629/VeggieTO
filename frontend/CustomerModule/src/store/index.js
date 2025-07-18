@@ -1,13 +1,28 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import cartReducer from './cartSlice';
+import storage from 'redux-persist/lib/storage';
 import notificationReducer from './NotificationSlice';
+import persistReducer from "redux-persist/es/persistReducer";
+import persistStore from "redux-persist/es/persistStore";
 
-const store = configureStore({
-    reducer: {
-        cart: cartReducer,
-        notification: notificationReducer,
-    },
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: ['notification'],
+}
+const rootReducer = combineReducers({
+    cart: cartReducer,
+    notification: notificationReducer,
 });
 
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export default store;
+const store = configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ serializableCheck: false }),
+});
+
+const persistor = persistStore(store);
+
+export { store, persistor };

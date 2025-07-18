@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     notifications: [],
+    unreadCount: 0,
 }
 
 
@@ -14,12 +15,20 @@ const notificationSlice = createSlice({
                 message: action.payload,
                 timestamp: new Date().toString(),
             });
+            state.unreadCount += 1;
         },
         removeNotification: (state) => {
-            state.notification = [];
+            state.notifications = [];
+        },
+        markAllasRead: (state) => {
+            state.unreadCount = 0;
+            state.notifications = state.notifications.map(notification => ({
+                ...notification,
+                read: true,
+            }));
         }
     }
 });
 
-export const { addNotification, removeNotification } = notificationSlice.actions;
+export const { addNotification, removeNotification, markAllasRead } = notificationSlice.actions;
 export default notificationSlice.reducer;

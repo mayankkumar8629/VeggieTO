@@ -42,7 +42,7 @@ const Navbar = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const notifications = useSelector(
-    (state) => state.notification.notifications.length
+    (state) => state.notification.unreadCount
   ); 
   const notificationData = useSelector((state)=> state.notification.notifications);
   console.log("Notification Data:", notificationData);
@@ -72,12 +72,13 @@ const Navbar = () => {
       if (data.status) {
         data.message = `Delivery ${data.status} for order to ${data.riderName}`;
       }
+      data['read'] = false;
       dispatch(addNotification(data.message));
     };
 
     socket.on("delivery_assigned", handleDelivery);
     socket.on("delivery_picked_up", handleDelivery);
-    socket.on("");
+    socket.on("delivery_delivered", handleDelivery);
 
     return () => {
       socket.off("delivery_assigned", handleDelivery);

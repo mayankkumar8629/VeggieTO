@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Package, ShoppingCart, User, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+import { markAllasRead, removeNotification } from '../../../store/NotificationSlice';
 
 const NotificationMenu = ({ notifications = 0, notificationData = [] }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Function to format timestamp to relative time
@@ -77,9 +80,9 @@ const NotificationMenu = ({ notifications = 0, notificationData = [] }) => {
   const processedNotifications = notificationData.map((notification, index) => ({
     id: index + 1,
     message: notification.message,
+    read: notification.read || false,
     timestamp: notification.timestamp,
     time: formatTimeAgo(notification.timestamp),
-    read: false, // You can modify this based on your read/unread logic
     ...getNotificationDetails(notification.message)
   }));
 
@@ -112,15 +115,14 @@ const NotificationMenu = ({ notifications = 0, notificationData = [] }) => {
     setOpen(false);
   };
 
-  const markAllAsRead = () => {
-    // Implement mark all as read functionality
-    console.log('Mark all notifications as read');
+  const markAllRead = () => {
+    dispatch(markAllasRead());
     setOpen(false);
   };
 
   const clearAll = () => {
     // Implement clear all notifications functionality
-    console.log('Clear all notifications');
+    dispatch(removeNotification())
     setOpen(false);
   };
 
@@ -159,7 +161,7 @@ const NotificationMenu = ({ notifications = 0, notificationData = [] }) => {
                 <h3 className="font-semibold text-gray-800">Notifications</h3>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={markAllAsRead}
+                    onClick={markAllRead}
                     className="text-xs text-green-600 hover:text-green-700 font-medium"
                   >
                     Mark all read
@@ -235,20 +237,6 @@ const NotificationMenu = ({ notifications = 0, notificationData = [] }) => {
               )}
             </div>
 
-            {/* Footer */}
-            {processedNotifications.length > 0 && (
-              <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
-                <button
-                  onClick={() => {
-                    navigate('/notifications');
-                    setOpen(false);
-                  }}
-                  className="w-full text-center text-sm text-green-600 hover:text-green-700 font-medium"
-                >
-                  View all notifications
-                </button>
-              </div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
