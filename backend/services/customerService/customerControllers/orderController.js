@@ -58,6 +58,7 @@ export const placeOrder = async (req, res) => {
             const outOfStockItem = cart.items.filter(
                 item => item.itemId.stock < item.quantity
             );
+            console.log(outOfStockItem);
             if (outOfStockItem.length > 0) {
                 return res.status(400).json({ message: "some items are out of stock" })
             }

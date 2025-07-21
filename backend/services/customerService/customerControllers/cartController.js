@@ -82,7 +82,7 @@ export const addCartItem = async (req, res) => {
   
         // Check item availability
         const item = await Item.findById(itemId).session(session);
-        if (!item || item.quantity < 1) {
+        if (!item || item.stock < 1) {
           throw { status: 404, message: "Item out of stock" };
         }
   
